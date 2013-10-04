@@ -24,6 +24,7 @@ div[class='social'] a {
 .social a[href*='git.io'] {background-image: url('../images/icons/github.png');}
 .social a[href*='linkedin.com'] {background-image: url('../images/icons/linkedin.png');}
 .social a[href*='xing.com'] {background-image: url('../images/icons/xing.png');}
+.social a[type$='atom+xml'], .social a[type$='rss+xml'] {background-image: url('../images/icons/rss.png');}
 
 /*tag cloud*/
 div.tagcloud ul {
