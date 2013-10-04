@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Pavlo Bogomolenko's Blog</title><link href="http://pavelbogomolenko.github.io/" rel="alternate"></link><link href="http://pavelbogomolenko.github.io/feeds/articles.atom.xml" rel="self"></link><id>http://pavelbogomolenko.github.io/</id><updated>2013-10-04T11:05:00+02:00</updated><entry><title>AngularJS in production - part 1</title><link href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html" rel="alternate"></link><updated>2013-10-04T11:05:00+02:00</updated><author><name>Pavlo Bogomolenko</name></author><id>tag:pavelbogomolenko.github.io,2013-10-04:angularjs-in-production-part-1.html</id><summary type="html">&lt;p&gt;In this article I would like to share you my production experience with AngularJS based applications.
+I will try to cover topics related to development process, testing and integrtion as well as some hints
+on how to optimize your AngularJS application.&lt;/p&gt;
+&lt;p&gt;In this part I would like to start with &lt;strong&gt;code structure&lt;/strong&gt; and &lt;strong&gt;dependencies management&lt;/strong&gt; which are most important 
+things you have to think about before implementation.&lt;/p&gt;
+&lt;p&gt;So lets start.&lt;/p&gt;
+&lt;h4&gt;Code structure&lt;/h4&gt;
+&lt;p&gt;This is how your code structure might look like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;AppRoot&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;vendors&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;1.0.7&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;jquery&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;jquery&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;1.10.2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;require&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;     &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;widgetapp&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;bootstrap&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;controllers&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;widget&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;models&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;urlbuilder&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;services&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;configurationresource&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;tests&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;     &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;     &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;unit&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;         &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;controllers&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;         &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;models&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;         &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;modules&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;│  &lt;/span&gt;         &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;routes&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;buildwidgetapp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;karma&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;conf&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;package&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;
+&lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;widgetapp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In general you can use whatever structure you like just keep in mind that it should be "self speakable" and clear.&lt;/p&gt;
+&lt;h4&gt;Dependencies management&lt;/h4&gt;
+&lt;p&gt;In addition to well-orginized code structure we need an easy way to load all modules and keep an eye on module/external
+libraries dependencies. Likely AngularJS is build to support &lt;a href="https://github.com/amdjs/amdjs-api/wiki/AMD"&gt;Asynchronous Module Definition&lt;/a&gt; 
+and therefore we would you use &lt;a href="http://requirejs.org/"&gt;RequireJS&lt;/a&gt; to achive this.&lt;/p&gt;
+&lt;p&gt;So lets define RequireJS configuration file(widgetapp.js):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//require config&lt;/span&gt;
+&lt;span class="n"&gt;requirejs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;config&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+        &lt;span class="c1"&gt;//By default load any module from js path&lt;/span&gt;
+        &lt;span class="nl"&gt;baseUrl:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;your&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;application&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;AppRoot&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;,&lt;/span&gt;
+        &lt;span class="c1"&gt;//configure dependencies&lt;/span&gt;
+        &lt;span class="nl"&gt;shim:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="nl"&gt;angular:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nl"&gt;exports:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;},&lt;/span&gt;
+                &lt;span class="nl"&gt;ngResource:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                        &lt;span class="nl"&gt;deps:&lt;/span&gt; &lt;span class="p"&gt;[&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;],&lt;/span&gt;
+                        &lt;span class="nl"&gt;exports:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;&lt;/span&gt;
+                &lt;span class="p"&gt;},&lt;/span&gt;
+                &lt;span class="c1"&gt;//ngSanitize: {&lt;/span&gt;
+                &lt;span class="c1"&gt;//      deps: [&amp;#39;angular&amp;#39;],&lt;/span&gt;
+                &lt;span class="c1"&gt;//      exports: &amp;#39;angular&amp;#39;&lt;/span&gt;
+                &lt;span class="c1"&gt;//},&lt;/span&gt;
+                &lt;span class="nl"&gt;jq:&lt;/span&gt; &lt;span class="p"&gt;{&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;exports&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;jQuery&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;}&lt;/span&gt;
+        &lt;span class="p"&gt;},&lt;/span&gt;
+        &lt;span class="c1"&gt;//configure additional paths from where to load modules&lt;/span&gt;
+        &lt;span class="nl"&gt;paths:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="nl"&gt;angular:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;vendors&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;1.0.7&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;,&lt;/span&gt;
+                &lt;span class="nl"&gt;ngResource:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;vendors&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;1.0.7&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;angular&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;resource&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;,&lt;/span&gt;
+                &lt;span class="c1"&gt;//ngSanitize: &amp;#39;vendors/angular-1.0.7/angular-sanitize&amp;#39;,&lt;/span&gt;
+                &lt;span class="nl"&gt;jq:&lt;/span&gt; &lt;span class="p"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;vendors&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;jquery&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;jquery&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;1.10.2&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="c1"&gt;//init application&lt;/span&gt;
+&lt;span class="n"&gt;require&lt;/span&gt;&lt;span class="p"&gt;([&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;widgetapp&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bootstrap&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;],&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And here are our demo bootstrap file(widgetapp/bootstrap.js):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;define&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;widgetapp/bootstrap&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;angular&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;jq&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;widgetapp/services/configurationresource&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;widgetapp/app&amp;#39;&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;angular&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;jq&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;App&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="c1"&gt;//application initialization goes here&lt;/span&gt;
+            &lt;span class="c1"&gt;//reading configuration, routes and etc&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Success. At this point you already have working structrure. Now it is time to setup test runner, select testing framework
+and start implememtation of buisiness logic. This part I will try to cover in next chapter.&lt;/p&gt;</summary><category term="AngularJS"></category><category term="Javascript"></category><category term="RequireJS"></category></entry></feed>

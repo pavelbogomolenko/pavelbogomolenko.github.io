@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>AngularJS in production - part 1</title>
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
+	<!-- <link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap-responsive.min.css" /> -->
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
+
+	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
+	<link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Pavlo Bogomolenko's Blog RSS Feed" />
+</head>
+
+<body id="index" class="home">
+<a href="https://github.com/pavelbogomolenko">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+	<header id="banner" class="body">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-inner">
+				<div class="container">
+					<!--
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					-->
+					<a class="brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
+					<div class="nav-collapse collapse">
+					<ul class="nav">
+							<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
+					</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<ul>
+				</ul>
+	</header><!-- /#banner -->
+	
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<div class="row">
+					<div class="span9">	<article>
+		<header>
+			<h1 class="entry-title">
+			<a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html" rel="bookmark"
+			title="Permalink to AngularJS in production - part 1">AngularJS in production - part 1</a></h1>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="pbogomolenko">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		</header>
+
+		<div class="entry-content">
+<footer class="post-info">
+	<div class="published" title="2013-10-04T11:05:00">
+		04 October 2013 11:05
+	</div>
+
+	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS&nbsp;</a></div>	
+</footer><!-- /.post-info -->			<p>In this article I would like to share you my production experience with AngularJS based applications.
+I will try to cover topics related to development process, testing and integrtion as well as some hints
+on how to optimize your AngularJS application.</p>
+<p>In this part I would like to start with <strong>code structure</strong> and <strong>dependencies management</strong> which are most important 
+things you have to think about before implementation.</p>
+<p>So lets start.</p>
+<h4>Code structure</h4>
+<p>This is how your code structure might look like:</p>
+<div class="highlight"><pre><span class="n">AppRoot</span>
+<span class="err">├──</span> <span class="n">vendors</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">jquery</span>
+<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">jquery</span><span class="o">-</span><span class="mf">1.10.2</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">require</span>
+<span class="err">│  </span>     <span class="err">└──</span> <span class="n">require</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">widgetapp</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">app</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">bootstrap</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">controllers</span>
+<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">widget</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">data</span>
+<span class="err">│  </span> <span class="err">│  </span> <span class="err">├──</span> <span class="n">config</span><span class="p">.</span><span class="n">json</span>
+<span class="err">│  </span> <span class="err">│  </span> <span class="err">├──</span> <span class="n">sample</span><span class="p">.</span><span class="n">json</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">models</span>
+<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">urlbuilder</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">services</span>
+<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">configurationresource</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">tests</span>
+<span class="err">│  </span>     <span class="err">├──</span> <span class="n">main</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>     <span class="err">└──</span> <span class="n">unit</span>
+<span class="err">│  </span>         <span class="err">├──</span> <span class="n">controllers</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>         <span class="err">├──</span> <span class="n">models</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>         <span class="err">└──</span> <span class="n">modules</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>         <span class="err">└──</span> <span class="n">routes</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">buildwidgetapp</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">karma</span><span class="p">.</span><span class="n">conf</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">package</span><span class="p">.</span><span class="n">json</span>
+<span class="err">└──</span> <span class="n">widgetapp</span><span class="p">.</span><span class="n">js</span>
+</pre></div>
+
+
+<p>In general you can use whatever structure you like just keep in mind that it should be "self speakable" and clear.</p>
+<h4>Dependencies management</h4>
+<p>In addition to well-orginized code structure we need an easy way to load all modules and keep an eye on module/external
+libraries dependencies. Likely AngularJS is build to support <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Asynchronous Module Definition</a> 
+and therefore we would you use <a href="http://requirejs.org/">RequireJS</a> to achive this.</p>
+<p>So lets define RequireJS configuration file(widgetapp.js):</p>
+<div class="highlight"><pre><span class="c1">//require config</span>
+<span class="n">requirejs</span><span class="p">.</span><span class="k">config</span><span class="p">({</span>
+        <span class="c1">//By default load any module from js path</span>
+        <span class="nl">baseUrl:</span> <span class="p">&#39;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">your</span><span class="o">/</span><span class="n">application</span><span class="o">/</span><span class="n">AppRoot</span><span class="p">&#39;,</span>
+        <span class="c1">//configure dependencies</span>
+        <span class="nl">shim:</span> <span class="p">{</span>
+                <span class="nl">angular:</span> <span class="p">{</span><span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">&#39;},</span>
+                <span class="nl">ngResource:</span> <span class="p">{</span>
+                        <span class="nl">deps:</span> <span class="p">[&#39;</span><span class="n">angular</span><span class="p">&#39;],</span>
+                        <span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">&#39;</span>
+                <span class="p">},</span>
+                <span class="c1">//ngSanitize: {</span>
+                <span class="c1">//      deps: [&#39;angular&#39;],</span>
+                <span class="c1">//      exports: &#39;angular&#39;</span>
+                <span class="c1">//},</span>
+                <span class="nl">jq:</span> <span class="p">{&#39;</span><span class="n">exports</span><span class="p">&#39;</span> <span class="o">:</span> <span class="p">&#39;</span><span class="n">jQuery</span><span class="p">&#39;}</span>
+        <span class="p">},</span>
+        <span class="c1">//configure additional paths from where to load modules</span>
+        <span class="nl">paths:</span> <span class="p">{</span>
+                <span class="nl">angular:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="p">&#39;,</span>
+                <span class="nl">ngResource:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="n">resource</span><span class="p">&#39;,</span>
+                <span class="c1">//ngSanitize: &#39;vendors/angular-1.0.7/angular-sanitize&#39;,</span>
+                <span class="nl">jq:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">jquery</span><span class="o">/</span><span class="n">jquery</span><span class="o">-</span><span class="mf">1.10.2</span><span class="p">&#39;</span>
+        <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">//init application</span>
+<span class="n">require</span><span class="p">([&#39;</span><span class="n">widgetapp</span><span class="o">/</span><span class="n">bootstrap</span><span class="p">&#39;],</span> <span class="k">function</span><span class="p">()</span> <span class="p">{});</span>
+</pre></div>
+
+
+<p>And here are our demo bootstrap file(widgetapp/bootstrap.js):</p>
+<div class="highlight"><pre><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;widgetapp/bootstrap&#39;</span><span class="p">,</span>
+        <span class="cp">[</span><span class="s1">&#39;angular&#39;</span><span class="p">,</span> <span class="s1">&#39;jq&#39;</span><span class="p">,</span> <span class="s1">&#39;widgetapp/services/configurationresource&#39;</span><span class="p">,</span> <span class="s1">&#39;widgetapp/app&#39;</span><span class="cp">]</span><span class="p">,</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">angular</span><span class="p">,</span> <span class="nx">jq</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">App</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//application initialization goes here</span>
+            <span class="c1">//reading configuration, routes and etc</span>
+        <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+
+
+<p>Success. At this point you already have working structrure. Now it is time to setup test runner, select testing framework
+and start implememtation of buisiness logic. This part I will try to cover in next chapter.</p>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+			<h2>Comments</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+				var disqus_identifier = "angularjs-in-production-part-1.html";
+				var disqus_url = "http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html";
+				(function() {
+				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://pavlobogomolenko.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			</script>
+		</div>
+
+	</article>
+</div>
+					<div class="span3">
+						<div class="tagcloud">
+							<h2>Tag cloud</h2>
+							<ul>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+							</ul>
+						</div>
+
+						<div class="social">
+							<h2>Social</h2>
+							<ul>
+								<li><a href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+								<li><a href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate">rss feed</a></li>
+									<li><a href="https://twitter.com/pbogomolenko">twitter</a></li>
+									<li><a href="http://www.linkedin.com/profile/view?id=222350828">linkedin</a></li>
+									<li><a href="https://www.xing.com/profiles/Pavlo_Bogomolenko">xing</a></li>
+							</ul>
+						</div><!-- /.social -->
+
+						<div class="twitter-widget">
+							<a class="twitter-timeline" href="https://twitter.com/pbogomolenko" data-widget-id="385711764647600128">Tweets by @pbogomolenko</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<footer id="footer" class="body">
+		<p>
+		Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+		</p>
+	</footer>
+
+<script type="text/javascript">
+    var disqus_shortname = 'pavlobogomolenko';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>

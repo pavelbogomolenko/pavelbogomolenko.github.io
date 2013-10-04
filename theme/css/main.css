@@ -1,4 +1,4 @@
-
+@import url("pygment.css");
 
 /*social*/
 div.social ul {
@@ -90,7 +90,7 @@ a:hover {
 	background-color: #08c;
 	color: #fff;
 	text-decoration: none;
-	text-shadow: 1px 1px 1px #cece;
+	text-shadow: 1px 1px 1px #cecece;
 }
 
 h1 a:hover {
@@ -131,4 +131,9 @@ a.brand:hover {
 
 .comments {
 	font-size: 90%;
+}
+
+/* reset bootstrap */
+pre {
+	background: none;
 }
