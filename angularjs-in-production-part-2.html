@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>AngularJS in production - part 2</title>
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
+	<!-- <link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap-responsive.min.css" /> -->
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
+
+	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
+	<link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Pavlo Bogomolenko's Blog RSS Feed" />
+</head>
+
+<body id="index" class="home">
+<a href="https://github.com/pavelbogomolenko">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+	<header id="banner" class="body">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-inner">
+				<div class="container">
+					<!--
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					-->
+					<a class="brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
+					<div class="nav-collapse collapse">
+					<ul class="nav">
+							<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
+					</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<ul>
+				</ul>
+	</header><!-- /#banner -->
+	
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<div class="row">
+					<div class="span9">	<article>
+		<header>
+			<h1 class="entry-title">
+			<a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-2.html" rel="bookmark"
+			title="Permalink to AngularJS in production - part 2">AngularJS in production - part 2</a></h1>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="pbogomolenko">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		</header>
+
+		<div class="entry-content">
+<footer class="post-info">
+	<div class="published" title="2013-10-06T09:22:00">
+		06 October 2013 09:22
+	</div>
+
+	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM&nbsp;</a></div>	
+</footer><!-- /.post-info -->			<p>This is second part from "AngularJS in production" series. In this part I will talk about test runner, 
+testing framework and writing unit tests in AngularJS application.</p>
+<p>If you have have never heard about <a href="http://karma-runner.github.io/">Karma</a> it is really good time to start digg it now.
+In short: Karma is "Spectacular Test Runner for JavaScript" (as stated on website). It is build to make life of developers 
+easy especially when it comes to testing JS applications. It comes with all batteries included like: easy install via <a href="https://npmjs.org/">NPM</a>, 
+bunch of popular testing frameworks (<a href="http://pivotal.github.io/jasmine/">Jasmine</a>, <a href="http://qunitjs.com/">QUnit</a>, <a href="http://visionmedia.github.io/mocha/">Mocha</a>), 
+testing on real devices + headless testing with <a href="http://phantomjs.org/">PhantomJS</a>, easy debugging and simple continuous intergration.</p>
+<p>First lets create NPM package configuration file in our AppRoot (package.json):</p>
+<div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;demo-angular-js-app&quot;</span><span class="o">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.1&quot;</span><span class="o">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Demo package configuration&quot;</span><span class="o">,</span>
+    <span class="s2">&quot;author&quot;</span><span class="o">:</span> <span class="err">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Pavlo Bogomolenko&quot;</span>
+    <span class="p">}</span><span class="o">,</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;karma&quot;</span><span class="o">:</span><span class="s2">&quot;0.10.*&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;karma-jasmine&quot;</span><span class="o">:</span><span class="s2">&quot;*&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;karma-junit-reporter&quot;</span><span class="o">:</span> <span class="s2">&quot;~0.1&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;requirejs&quot;</span><span class="o">:</span><span class="s2">&quot;2.1.*&quot;</span>
+    <span class="p">}</span><span class="o">,</span>
+    <span class="s2">&quot;engines&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;node&quot;</span><span class="o">:</span> <span class="s2">&quot;~0.10.15&quot;</span>
+    <span class="p">}</span><span class="o">,</span>
+    <span class="s2">&quot;licenses&quot;</span><span class="o">:</span> <span class="cp">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;GPL&quot;</span>
+    <span class="p">}</span>
+    <span class="cp">]</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<p>Now lets install all described packages:</p>
+<div class="highlight"><pre><span class="n">npm</span> <span class="n">install</span>
+</pre></div>
+
+
+<p>In order to work properly with your application Karma should know about you application structure. So let's quickly return 
+to our code structure from <a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html">part 1</a>.</p>
+<div class="highlight"><pre><span class="n">AppRoot</span>
+<span class="err">├──</span> <span class="n">vendors</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="p">...</span>
+<span class="err">├──</span> <span class="n">widgetapp</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">controllers</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="p">...</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">models</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="p">...</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">tests</span>
+<span class="err">│  </span>     <span class="err">├──</span> <span class="n">main</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>     <span class="err">└──</span> <span class="n">unit</span>
+<span class="err">│  </span>         <span class="err">├──</span> <span class="n">controllers</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>         <span class="err">├──</span> <span class="n">models</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>         <span class="err">└──</span> <span class="n">modules</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">│  </span>         <span class="err">└──</span> <span class="n">routes</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">buildwidgetapp</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">karma</span><span class="p">.</span><span class="n">conf</span><span class="p">.</span><span class="n">js</span>
+<span class="err">├──</span> <span class="n">package</span><span class="p">.</span><span class="n">json</span>
+<span class="err">└──</span> <span class="n">widgetapp</span><span class="p">.</span><span class="n">js</span>
+</pre></div>
+
+
+<p>Lets define Karma configuration file(karma.conf.js):</p>
+<div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">set</span><span class="p">({</span>
+        <span class="nx">frameworks</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;jasmine&#39;</span><span class="p">,</span> <span class="s1">&#39;requirejs&#39;</span><span class="cp">]</span><span class="p">,</span> <span class="c1">//js testing fromework to use</span>
+        <span class="c1">//appliction code structure</span>
+        <span class="nx">files</span><span class="o">:</span> <span class="cp">[</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/angular-1.0.7/angular.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/angular-1.0.7/angular-resource.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/angular-1.0.7/angular-mocks.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/jquery/jquery-1.10.2.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/*.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/controllers/*.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/models/*.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/tests/unit/*test.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
+            <span class="s1">&#39;widgetapp/tests/main.js&#39;</span>
+        <span class="cp">]</span><span class="p">,</span>
+        <span class="c1">// list of files to exclude</span>
+        <span class="nx">exclude</span><span class="o">:</span> <span class="cp">[</span>
+            <span class="s1">&#39;widgetapp/bootstrap.js&#39;</span>
+        <span class="cp">]</span><span class="p">,</span>
+        <span class="c1">// test results reporter to use</span>
+        <span class="nx">reporters</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;junit&#39;</span><span class="cp">]</span><span class="p">,</span>
+        <span class="nx">port</span><span class="o">:</span> <span class="mi">9876</span><span class="p">,</span>
+        <span class="nx">colors</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="c1">//log level</span>
+        <span class="nx">logLevel</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_ERROR</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_WARN</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_INFO</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_DEBUG</span><span class="p">,</span>
+        <span class="nx">autoWatch</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">browsers</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;PhantomJS&#39;</span><span class="cp">]</span><span class="p">,</span> <span class="c1">//in which browser to test</span>
+        <span class="nx">captureTimeout</span><span class="o">:</span> <span class="mi">60000</span><span class="p">,</span>
+        <span class="c1">// if true, it capture browsers, run tests and exit. CI mode</span>
+        <span class="nx">singleRun</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">junitReporter</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">outputFile</span><span class="o">:</span> <span class="s1">&#39;test-results.xml&#39;</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Configuration should look pretty straightforward. More information about properties and possible options you can always 
+find in <a href="http://karma-runner.github.io/0.10/config/configuration-file.html">official documentation</a>.</p>
+<p><strong>What is really important in our case is that we use RequireJS to load all our modules asynchronously and keep dependencies
+clear.</strong> Therefore we need RequireJS configuration file for loading tests as well and ideally we should be able to
+reuse existing RequireJS configuration file from <a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html">part 1</a> of this series.</p>
+<p>That's what we will actually do next and luckily <a href="http://karma-runner.github.io/0.10/plus/requirejs.html">Karma support RequireJS</a>
+natively with few additinal properties.</p>
+<p>Now lets create RequireJS configuration for our test suits (AppRoot/tests/main.js):</p>
+<div class="highlight"><pre><span class="c1">//Now we can tell Require.js to load our tests, which must be done asynchronously</span>
+<span class="c1">// as dependencies must be fetched before the tests are run..</span>
+<span class="k">var</span> <span class="n">tests</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">var</span> <span class="n">file</span> <span class="n">in</span> <span class="n">window</span><span class="p">.</span><span class="n">__karma__</span><span class="p">.</span><span class="n">files</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">__karma__</span><span class="p">.</span><span class="n">files</span><span class="p">.</span><span class="n">hasOwnProperty</span><span class="p">(</span><span class="n">file</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">/</span><span class="n">test</span><span class="err">\</span><span class="p">.</span><span class="n">js</span><span class="err">$</span><span class="o">/</span><span class="p">.</span><span class="n">test</span><span class="p">(</span><span class="n">file</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(&#39;</span><span class="n">Loading</span> <span class="n">test</span> <span class="nl">suit:</span> <span class="p">&#39;</span> <span class="o">+</span> <span class="n">file</span><span class="p">);</span>
+            <span class="n">tests</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">//require config for tests. Basically we will reuse this section from (widgetapp.js)</span>
+<span class="c1">//with few additional options</span>
+<span class="n">requirejs</span><span class="p">.</span><span class="k">config</span><span class="p">({</span>
+    <span class="c1">//By default load any module from base</span>
+    <span class="nl">baseUrl:</span> <span class="p">&#39;</span><span class="o">/</span><span class="n">base</span><span class="p">&#39;,</span>
+    <span class="c1">//configure dependencies</span>
+    <span class="nl">shim:</span> <span class="p">{</span>
+        <span class="nl">angular:</span> <span class="p">{</span><span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">&#39;},</span>
+        <span class="nl">ngResource:</span> <span class="p">{</span>
+            <span class="nl">deps:</span> <span class="p">[&#39;</span><span class="n">angular</span><span class="p">&#39;],</span>
+            <span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">&#39;</span>
+        <span class="p">},</span>
+        <span class="nl">mock:</span> <span class="p">{</span>
+            <span class="nl">deps:</span> <span class="p">[&#39;</span><span class="n">angular</span><span class="p">&#39;],</span>
+            <span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">.</span><span class="n">mock</span><span class="p">&#39;</span>
+        <span class="p">},</span>
+        <span class="nl">jq:</span> <span class="p">{&#39;</span><span class="n">exports</span><span class="p">&#39;</span> <span class="o">:</span> <span class="p">&#39;</span><span class="n">jQuery</span><span class="p">&#39;}</span>
+    <span class="p">},</span>
+    <span class="c1">//configure additional paths from where to load modules </span>
+    <span class="nl">paths:</span> <span class="p">{</span>
+        <span class="nl">angular:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="p">&#39;,</span>
+        <span class="nl">ngResource:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="n">resource</span><span class="p">&#39;,</span>
+        <span class="nl">mock:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="n">mocks</span><span class="p">&#39;,</span>
+        <span class="nl">jq:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">jquery</span><span class="o">/</span><span class="n">jquery</span><span class="o">-</span><span class="mf">1.10.2</span><span class="p">&#39;</span>
+    <span class="p">},</span>
+    <span class="c1">// ask Require.js to load these files (all our tests - see above)</span>
+    <span class="nl">deps:</span> <span class="n">tests</span><span class="p">,</span>
+    <span class="c1">// start test run, once Require.js is done</span>
+    <span class="nl">callback:</span> <span class="n">window</span><span class="p">.</span><span class="n">__karma__</span><span class="p">.</span><span class="n">start</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>We will use <strong>Jasmine as testing framework</strong> which is quite obvious choice due to clean and self-descriptive syntax
+and in fact whole AngularJS code base is covered with it.</p>
+<p>Due to the fact that all unit tests are application specific lets define one "general" (of course even here we will rely on
+existence of certain modules) which will simply check if all our modules has been loaded (tests/unit/modules.test.js):</p>
+<div class="highlight"><pre><span class="c1">//define([&#39;angular&#39;, &#39;jq&#39;, &#39;mock&#39;, &#39;widgetapp/app&#39;],</span>
+    <span class="nx">function</span><span class="p">(</span><span class="nx">angular</span><span class="p">,</span> <span class="nx">jq</span><span class="p">,</span> <span class="nx">mock</span><span class="p">,</span> <span class="nx">App</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">describe</span><span class="p">(</span><span class="s1">&#39;Testing WidgetApp module&#39;</span><span class="p">,</span> <span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">module</span><span class="p">;</span>
+            <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="err">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span><span class="bp">.</span><span class="nb">append</span><span class="p">(</span><span class="s1">&#39;&lt;div id=&quot;widget&quot;&gt;{{widgetData}}&lt;/div&gt;&#39;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="n">conf</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;end_point_url&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">};</span>
+                <span class="kd">var</span> <span class="n">app</span> <span class="o">=</span> <span class="nb">new</span> <span class="nx">App</span><span class="p">(</span><span class="err">$</span><span class="p">(</span><span class="s1">&#39;#widget&#39;</span><span class="p">),</span> <span class="nx">conf</span><span class="p">);</span>
+
+                <span class="n">module</span> <span class="o">=</span> <span class="nx">angular.module</span><span class="p">(</span><span class="s1">&#39;Widgetapp&#39;</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;should be registered&quot;</span><span class="p">,</span> <span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">expect</span><span class="p">(</span><span class="nx">module</span><span class="p">)</span><span class="bp">.</span><span class="nx">not.toBeUndefined</span><span class="p">();</span>
+            <span class="p">});</span>
+
+            <span class="nb">describe</span><span class="p">(</span><span class="s2">&quot;Dependencies:&quot;</span><span class="p">,</span> <span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">deps</span><span class="p">;</span>
+                <span class="kd">var</span> <span class="n">hasModule</span> <span class="o">=</span> <span class="nx">function</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">deps.indexOf</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">};</span>
+
+                <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="n">deps</span> <span class="o">=</span> <span class="nx">module.value</span><span class="p">(</span><span class="s1">&#39;appName&#39;</span><span class="p">)</span><span class="bp">.</span><span class="nb">requires</span><span class="p">;</span>
+                <span class="p">});</span>
+
+                <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;should have Controllers as a dependency&quot;</span><span class="p">,</span> <span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">expect</span><span class="p">(</span><span class="nx">hasModule</span><span class="p">(</span><span class="s1">&#39;Controllers&#39;</span><span class="p">))</span><span class="bp">.</span><span class="nx">toEqual</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+
+
+<p>Now lets run Karma:</p>
+<div class="highlight"><pre><span class="o">/</span><span class="n">node_modules</span><span class="o">/</span><span class="n">karma</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">karma</span> <span class="n">start</span>
+</pre></div>
+
+
+<p>And if everything run smoothely you could see something like in your command line:</p>
+<div class="highlight"><pre><span class="n">PhantomJS</span> <span class="mf">1.9.2</span> <span class="p">(</span><span class="n">Linux</span><span class="p">)</span><span class="o">:</span> <span class="n">Executed</span> <span class="mi">2</span> <span class="n">of</span> <span class="mi">2</span> <span class="n">SUCCESS</span> <span class="p">(</span><span class="mf">0.276</span> <span class="n">secs</span> <span class="o">/</span> <span class="mf">0.024</span> <span class="n">secs</span><span class="p">)</span>
+</pre></div>
+
+
+<p>If you will have something different probably you messed soemthing with your configuration and/or your tests has failed.</p>
+<p>In general Unit testing and especially testing AngularJS topics are far larger than I described here and goes beyond
+this article but in general you should now able to explore new horizons by yourself and be able to setup testing environment
+easily.</p>
+<p>In the part 3 of this series I would finally share you information about Continious integration of AngularJS application and
+cover some aspects of deployment process.</p>
+<p>Stay tuned.</p>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+			<h2>Comments</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+				var disqus_identifier = "angularjs-in-production-part-2.html";
+				var disqus_url = "http://pavelbogomolenko.github.io/angularjs-in-production-part-2.html";
+				(function() {
+				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://pavlobogomolenko.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			</script>
+		</div>
+
+	</article>
+</div>
+					<div class="span3">
+						<div class="tagcloud">
+							<h2>Tag cloud</h2>
+							<ul>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+							</ul>
+						</div>
+
+						<div class="social">
+							<h2>Social</h2>
+							<ul>
+									<li><a href="https://twitter.com/pbogomolenko">twitter</a></li>
+									<li><a href="http://www.linkedin.com/profile/view?id=222350828">linkedin</a></li>
+									<li><a href="https://www.xing.com/profiles/Pavlo_Bogomolenko">xing</a></li>
+							</ul>
+						</div><!-- /.social -->
+
+						<div class="twitter-widget">
+							<a class="twitter-timeline" href="https://twitter.com/pbogomolenko" data-widget-id="385711764647600128">Tweets by @pbogomolenko</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<footer id="footer" class="body">
+		<p>
+		Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+		</p>
+	</footer>
+
+	<script type="text/javascript">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-44618483-1', 'pavelbogomolenko.github.io');
+		ga('send', 'pageview');
+
+	</script>
+<script type="text/javascript">
+    var disqus_shortname = 'pavlobogomolenko';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
