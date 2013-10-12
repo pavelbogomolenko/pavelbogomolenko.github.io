@@ -3,10 +3,12 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Pavlo Bogomolenko's Blog - Continuous integration</title>
-	<link rel="stylesheet" href="/theme/css/bootstrap.min.css" />
-	<!-- <link rel="stylesheet" href="/theme/css/bootstrap-responsive.min.css" /> -->
-	<link rel="stylesheet" href="/theme/css/main.css" />
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
+	<!-- <link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap-responsive.min.css" /> -->
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
 
+	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
+	<link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Pavlo Bogomolenko's Blog RSS Feed" />
 </head>
 
 <body id="index" class="home">
@@ -24,10 +26,10 @@
 						<span class="icon-bar"></span>
 					</button>
 					-->
-					<a class="brand" href="/">Pavlo Bogomolenko's Blog </a>
+					<a class="brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
 					<div class="nav-collapse collapse">
 					<ul class="nav">
-							<li><a href="/pages/about-me-and-this-blog.html">About me</a></li>
+							<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
 					</ul>
 					</div><!--/.nav-collapse -->
 				</div>
@@ -44,20 +46,20 @@
 				<div class="row">
 					<div class="span9">		<article class="hentry">
 			<header>
-				<h1><a href="/angularjs-in-production-part-1.html" rel="bookmark" 
-					title="Permalink to AngularJS in production - part 1">AngularJS in production - part 1</a></h1>
+				<h1><a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-3.html" rel="bookmark" 
+					title="Permalink to AngularJS in production - part 3">AngularJS in production - part 3</a></h1>
 			</header>
 
 			<div class="entry-content">
 <footer class="post-info">
-	<div class="published" title="2013-10-04T11:05:00">
-		04 October 2013 11:05
+	<div class="published" title="2013-10-12T04:35:00">
+		12 October 2013 04:35
 	</div>
 
-	<!-- <p>In <a href="/category/articles.html">articles</a>. -->
-<div class="tags">tags: <a href="/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="/tag/javascript/index.html">Javascript&nbsp;</a><a href="/tag/deployment/index.html">Deployment&nbsp;</a><a href="/tag/continuous-integration/index.html">Continuous integration&nbsp;</a><a href="/tag/unit-test/index.html">Unit test&nbsp;</a></div>	
-</footer><!-- /.post-info -->				<p>In this article I would like to share you my production experience with AngularJS based applications. I will try to cover topics related to development process, testing and integrtion as well as some hints on how to optimize your AngularJS application.</p>
-				<p><a class="btn btn-primary" href="/angularjs-in-production-part-1.html">more &raquo;</a></p>
+	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration&nbsp;</a></div>	
+</footer><!-- /.post-info -->				<p>This is the third and the last part of "AngularJS in production" series. Here I will cover topics related to minification of your source code, continuous integration and finally deployment of your application.</p>
+				<p><a class="btn btn-primary" href="http://pavelbogomolenko.github.io/angularjs-in-production-part-3.html">more &raquo;</a></p>
 			</div>
 		</article>
 
@@ -68,11 +70,14 @@
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-4"><a href="/tag/angularjs/index.html">AngularJS</a></li>
-									<li class="tag-4"><a href="/tag/continuous-integration/index.html">Continuous integration</a></li>
-									<li class="tag-4"><a href="/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-4"><a href="/tag/deployment/index.html">Deployment</a></li>
-									<li class="tag-4"><a href="/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
 							</ul>
 						</div>
 
@@ -102,6 +107,16 @@
 		</p>
 	</footer>
 
+	<script type="text/javascript">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-44618483-1', 'pavelbogomolenko.github.io');
+		ga('send', 'pageview');
+
+	</script>
 <script type="text/javascript">
     var disqus_shortname = 'pavlobogomolenko';
     (function () {

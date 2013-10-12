@@ -1,5 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pavlo Bogomolenko's Blog</title><link>http://pavelbogomolenko.github.io/</link><description></description><atom:link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 06 Oct 2013 09:22:00 +0200</lastBuildDate><item><title>AngularJS in production - part 2</title><link>http://pavelbogomolenko.github.io/angularjs-in-production-part-2.html</link><description>&lt;p&gt;This is second part from "AngularJS in production" series. In this part I will talk about test runner, 
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pavlo Bogomolenko's Blog</title><link>http://pavelbogomolenko.github.io/</link><description></description><atom:link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 12 Oct 2013 04:35:00 +0200</lastBuildDate><item><title>AngularJS in production - part 3</title><link>http://pavelbogomolenko.github.io/angularjs-in-production-part-3.html</link><description>&lt;p&gt;This is the third part of "AngularJS in production" series. Here I will cover topics related to minification
+ of your source code, continuous integration and finally deployment of your application.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Source code minification&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;As you remember from &lt;a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html"&gt;part 1&lt;/a&gt; and &lt;a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-2.html"&gt;part 2&lt;/a&gt;
+from this series we utilize RequireJS in our application. Luckily for us RequireJS is shipped with an optimization tool which:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Combines related scripts together into build layers and minifies them via UglifyJS;&lt;/li&gt;
+&lt;li&gt;Optimizes CSS by inlining CSS files referenced by @import and removing comments.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There are multiple options how to run optimizer:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Node;&lt;/li&gt;
+&lt;li&gt;Java with Rhino;&lt;/li&gt;
+&lt;li&gt;directly in browser;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We will use Node. And as stated in &lt;a href="http://requirejs.org/docs/optimization.html"&gt;official RequireJS optimization docs&lt;/a&gt;
+node is the preferred execution environment and the optimizer runs much faster with Node.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;What is really awesome about optimizer is that we can reuse existing RequireJS configuration file for minification and merge 
+all our JS source files into one single file.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Lets look how our configuration file can look like concidering our code structure from &lt;a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html"&gt;part 1&lt;/a&gt;
+of this series (buildwidgetapp.js)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="nl"&gt;baseUrl:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;.&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nl"&gt;paths:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nl"&gt;requireLib:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;vendors/require/require&amp;quot;&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="nl"&gt;mainConfigFile:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;widgetapp.js&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nl"&gt;name:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;widgetapp&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nl"&gt;out:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;widgets.js&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The most import option here is &lt;strong&gt;mainConfigFile&lt;/strong&gt; which defines RequireJS configuration file we should use. Information
+about all possible configuration params you can read &lt;a href="http://requirejs.org/docs/optimization.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Lets call an optimizer from command line:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;node_modules&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;requirejs&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;buildwidgetapp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;requireLib&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;buildwidgetapp.js - is path to our configuration file;&lt;/li&gt;
+&lt;li&gt;include=requireLib - tells optimizer to include RequireJS library on top of the compressed file (before any other module of 
+the application) cause all apllication is relies on existence of RequireJS file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Continuous integration with Jenkins&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Before creation of integration jobs lets remember how our Karma configuration file(karma.conf.js) look like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;module&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;exports&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;set&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+        &lt;span class="nx"&gt;frameworks&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;jasmine&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;requirejs&amp;#39;&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;//js testing fromework to use&lt;/span&gt;
+        &lt;span class="c1"&gt;//appliction code structure&lt;/span&gt;
+        &lt;span class="nx"&gt;files&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;vendors/angular-1.0.7/angular.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;vendors/angular-1.0.7/angular-resource.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;vendors/angular-1.0.7/angular-mocks.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;vendors/jquery/jquery-1.10.2.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;widgetapp/*.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;widgetapp/controllers/*.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;widgetapp/models/*.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;pattern&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;widgetapp/tests/unit/*test.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;included&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;widgetapp/tests/main.js&amp;#39;&lt;/span&gt;
+        &lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="c1"&gt;// list of files to exclude&lt;/span&gt;
+        &lt;span class="nx"&gt;exclude&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;widgetapp/bootstrap.js&amp;#39;&lt;/span&gt;
+        &lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="c1"&gt;// test results reporter to use&lt;/span&gt;
+        &lt;span class="nx"&gt;reporters&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;junit&amp;#39;&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;port&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;9876&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;colors&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="c1"&gt;//log level&lt;/span&gt;
+        &lt;span class="nx"&gt;logLevel&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;LOG_ERROR&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;LOG_WARN&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;LOG_INFO&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;LOG_DEBUG&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;autoWatch&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;browsers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;PhantomJS&amp;#39;&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;//in which browser to test&lt;/span&gt;
+        &lt;span class="nx"&gt;captureTimeout&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;60000&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="c1"&gt;// if true, it capture browsers, run tests and exit. CI mode&lt;/span&gt;
+        &lt;span class="nx"&gt;singleRun&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="c1"&gt;//Test report XML&lt;/span&gt;
+        &lt;span class="nx"&gt;junitReporter&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="nx"&gt;outputFile&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;test-results.xml&amp;#39;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here we are only interested in two configuration options "reporters" and "junitReporter" which actually define which test reporter to use
+and in which file generate output.&lt;/p&gt;
+&lt;p&gt;Than in Jenkins, start a new job for Angular/Karma with the basic settings (Name, description, parameters, source code repo to pull from, etc.)
+and in &lt;strong&gt;"Execute shell"&lt;/strong&gt; shell setting add following code:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;cd&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;your&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;AppRoot&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;
+&lt;span class="n"&gt;npm&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; 
+&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;node_modules&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;karma&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;karma&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;
+&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;node_modules&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;requirejs&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt; &lt;span class="n"&gt;buildwidgetapp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;js&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;requireLib&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Define absolute path to your "test-results.xml"  in &lt;em&gt;Publish JUnit test result report&lt;/em&gt; setting.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;your&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;AppRoot&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;results&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;xml&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you already might guess the result of this Jenkins job would be our test report in Jenkins artifacts folder
+and our minified "widgets.js" file which we could include easily add to HTML and deploy our application to the users.&lt;/p&gt;
+&lt;p&gt;That's all for now folks.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Pavlo Bogomolenko</dc:creator><pubDate>Sat, 12 Oct 2013 04:35:00 +0200</pubDate><guid>tag:pavelbogomolenko.github.io,2013-10-12:angularjs-in-production-part-3.html</guid><category>AngularJS</category><category>RequireJS</category><category>Jenkins</category><category>Continuous integration</category></item><item><title>AngularJS in production - part 2</title><link>http://pavelbogomolenko.github.io/angularjs-in-production-part-2.html</link><description>&lt;p&gt;This is second part from "AngularJS in production" series. In this part I will talk about test runner, 
 testing framework and writing unit tests in AngularJS application.&lt;/p&gt;
 &lt;p&gt;If you have have never heard about &lt;a href="http://karma-runner.github.io/"&gt;Karma&lt;/a&gt; it is really good time to start digg it now.
 In short: Karma is "Spectacular Test Runner for JavaScript" (as stated on website). It is build to make life of developers 
