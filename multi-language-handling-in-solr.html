@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Multi language handling in Solr</title>
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
+	<!-- <link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap-responsive.min.css" /> -->
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
+
+	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
+	<link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Pavlo Bogomolenko's Blog RSS Feed" />
+</head>
+
+<body id="index" class="home">
+<a href="https://github.com/pavelbogomolenko">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+	<header id="banner" class="body">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-inner">
+				<div class="container">
+					<!--
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					-->
+					<a class="brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
+					<div class="nav-collapse collapse">
+					<ul class="nav">
+							<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
+					</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<ul>
+				</ul>
+	</header><!-- /#banner -->
+	
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<div class="row">
+					<div class="span9">	<article>
+		<header>
+			<h1 class="entry-title">
+			<a href="http://pavelbogomolenko.github.io/multi-language-handling-in-solr.html" rel="bookmark"
+			title="Permalink to Multi language handling in Solr">Multi language handling in Solr</a></h1>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="pbogomolenko">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		</header>
+
+		<div class="entry-content">
+<footer class="post-info">
+	<div class="published" title="2013-12-28T11:10:00">
+		28 December 2013 11:10
+	</div>
+
+	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search&nbsp;</a></div>	
+</footer><!-- /.post-info -->			<p>If you are building full-text search application for your website on top of <a href="http://lucene.apache.org/solr/">Apache Solr</a> once you will definitly face 
+the problem on how to handle multiple language. There are at least 2 possibilities how to do it and here I will
+describe you both of them with possible bottlnecks you might have and solutions to upcoming problems.</p>
+<h3>1. Multicore approach</h3>
+<p>Perhaps most popular and well discribed is multicore approach. It is really easy to setup and start using it
+almost immidiatly if you already have configured one core (schema.xml and solrconfig.xml). You just need to dublicate existing core as many times as many languages you have.
+Than upon reading/writing select proper core depending on incoming language. That is all the magick. 
+By the way, demo example of multicore solr configuration is included in each downloadable solr package by this path <em>solr-4.X.X/example/multicore</em></p>
+<h3>2. Single core approach with language separation by document language field</h3>
+<p>This approach assume that you will use one core for storing all document languages and differentiate them by storing
+additional information about language inside solr document (e.g. language, iso code). This requires a bit more configuration therefore I will
+demonstrate you key changes that you will have to make to your solr schema and solrconfig files.</p>
+<p>Lets assume we have 2 languages English and German. </p>
+<p><strong>1. Add configuration of language specific field types to schema.xml</strong></p>
+<div class="highlight"><pre><span class="c">&lt;!-- fieldType for each language (default, en, de) --&gt;</span>
+<span class="nt">&lt;fieldType</span> <span class="na">name=</span><span class="s">&quot;text&quot;</span> <span class="na">class=</span><span class="s">&quot;solr.TextField&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;fieldType</span> <span class="na">name=</span><span class="s">&quot;text_en&quot;</span> <span class="na">class=</span><span class="s">&quot;solr.TextField&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;fieldType</span> <span class="na">name=</span><span class="s">&quot;text_de&quot;</span> <span class="na">class=</span><span class="s">&quot;solr.TextField&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>Here can be added additional information about language specific stopwords, synonyms and etc.</p>
+<p><strong>2. Add fields that might contain language specific data (e.g. title, desciption)</strong></p>
+<div class="highlight"><pre><span class="c">&lt;!-- configuration of fields in schema.xml for each language (default, en, de) --&gt;</span>
+<span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;title&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span>  <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;title_en&quot;</span> <span class="na">type=</span><span class="s">&quot;text_en&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;title_de&quot;</span> <span class="na">type=</span><span class="s">&quot;text_de&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span> 
+</pre></div>
+
+
+<p><strong>3. If you use dynamicField definition in your schema which might also be language specific also do not forget to describe
+it</strong> </p>
+<div class="highlight"><pre><span class="nt">&lt;dynamicField</span> <span class="na">name=</span><span class="s">&quot;*_s&quot;</span> <span class="na">type=</span><span class="s">&quot;string&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;dynamicField</span> <span class="na">name=</span><span class="s">&quot;*_s_en&quot;</span> <span class="na">type=</span><span class="s">&quot;string&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;dynamicField</span> <span class="na">name=</span><span class="s">&quot;*_s_de&quot;</span> <span class="na">type=</span><span class="s">&quot;string&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p><strong>4. Add field which will store information about language and iso code if necessary</strong></p>
+<div class="highlight"><pre><span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;language&quot;</span> <span class="na">type=</span><span class="s">&quot;string&quot;</span>  <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;iso_code&quot;</span> <span class="na">type=</span><span class="s">&quot;string&quot;</span>  <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>Upon writing to Solr do not forget to fill language and/or iso_code field as long as always fill
+default language specific fields (without prefix) and language specific fields with prefix. So in the end depending on
+Solr document language you will have something like:</p>
+<div class="highlight"><pre><span class="c">&lt;!-- for english document --&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;title&quot;</span><span class="nt">&gt;</span>some english title<span class="nt">&lt;/str&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;title_en&quot;</span><span class="nt">&gt;</span>some english title<span class="nt">&lt;/str&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;language&quot;</span><span class="nt">&gt;</span>en<span class="nt">&lt;/str&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;iso_code&quot;</span><span class="nt">&gt;</span>en-us<span class="nt">&lt;/str&gt;</span>
+</pre></div>
+
+
+<p>and on opposite side for German document</p>
+<div class="highlight"><pre><span class="c">&lt;!-- for german document --&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;title&quot;</span><span class="nt">&gt;</span>einige deutsch titel<span class="nt">&lt;/str&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;title_de&quot;</span><span class="nt">&gt;</span>einige deutsch titel<span class="nt">&lt;/str&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;language&quot;</span><span class="nt">&gt;</span>de<span class="nt">&lt;/str&gt;</span>
+<span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;iso_code&quot;</span><span class="nt">&gt;</span>de-de<span class="nt">&lt;/str&gt;</span>
+</pre></div>
+
+
+<p>Thats basically all.</p>
+<p>Some additional hints for those who are using Solr <a href="http://wiki.apache.org/solr/SpellCheckComponent">SpellCheckComponent</a>.</p>
+<p>Someone maybe a bit disappointed to see German suggestion in English search and other way around. However I might say sometimes
+it could be pretty funny. But nevertheless to make SpellCheckComponent to function properly again you need to add some
+addtional configuration to your SpellCheckComponent in solrconfig.xml:</p>
+<p><strong>1. You need to add spellchecker for each language (in our case English and German)</strong></p>
+<div class="highlight"><pre><span class="nt">&lt;searchComponent</span> <span class="na">name=</span><span class="s">&quot;spellcheck&quot;</span> <span class="na">class=</span><span class="s">&quot;solr.SpellCheckComponent&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;queryAnalyzerFieldType&quot;</span><span class="nt">&gt;</span>textSpell<span class="nt">&lt;/str&gt;</span>
+    <span class="nt">&lt;lst</span> <span class="na">name=</span><span class="s">&quot;spellchecker&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;name&quot;</span><span class="nt">&gt;</span>default<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;field&quot;</span><span class="nt">&gt;</span>spell<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;buildOnOptimize&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;buildOnCommit&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheckIndexDir&quot;</span><span class="nt">&gt;</span>./spellchecker<span class="nt">&lt;/str&gt;</span>
+    <span class="nt">&lt;/lst&gt;</span>
+    <span class="nt">&lt;lst</span> <span class="na">name=</span><span class="s">&quot;spellchecker&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;name&quot;</span><span class="nt">&gt;</span>spell_en<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;field&quot;</span><span class="nt">&gt;</span>spell_en<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;buildOnOptimize&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;buildOnCommit&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheckIndexDir&quot;</span><span class="nt">&gt;</span>./spellchecker_en<span class="nt">&lt;/str&gt;</span>
+    <span class="nt">&lt;/lst&gt;</span>
+    <span class="nt">&lt;lst</span> <span class="na">name=</span><span class="s">&quot;spellchecker&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;name&quot;</span><span class="nt">&gt;</span>spell_de<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;field&quot;</span><span class="nt">&gt;</span>spell_de<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;buildOnOptimize&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;buildOnCommit&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheckIndexDir&quot;</span><span class="nt">&gt;</span>./spellchecker_de<span class="nt">&lt;/str&gt;</span>
+    <span class="nt">&lt;/lst&gt;</span>
+<span class="nt">&lt;/searchComponent&gt;</span>
+</pre></div>
+
+
+<p><strong> 2. Register additional spellchecker dictionaries in requestHandler</strong></p>
+<div class="highlight"><pre><span class="nt">&lt;requestHandler</span> <span class="na">name=</span><span class="s">&quot;/spellCheckCompRH&quot;</span> <span class="na">class=</span><span class="s">&quot;solr.SearchHandler&quot;</span> <span class="na">lazy=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;lst</span> <span class="na">name=</span><span class="s">&quot;defaults&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheck.dictionary&quot;</span><span class="nt">&gt;</span>default<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheck.dictionary&quot;</span><span class="nt">&gt;</span>spell_en<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheck.dictionary&quot;</span><span class="nt">&gt;</span>spell_de<span class="nt">&lt;/str&gt;</span>
+        <span class="nt">&lt;str</span> <span class="na">name=</span><span class="s">&quot;spellcheck.count&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/str&gt;</span>
+    <span class="nt">&lt;/lst&gt;</span>
+    <span class="nt">&lt;arr</span> <span class="na">name=</span><span class="s">&quot;last-components&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;str&gt;</span>spellcheck<span class="nt">&lt;/str&gt;</span>
+    <span class="nt">&lt;/arr&gt;</span>
+<span class="nt">&lt;/requestHandler&gt;</span>
+</pre></div>
+
+
+<p><strong> 3. Add prefixed spell fields for each language to solr schema.xml</strong></p>
+<div class="highlight"><pre><span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;spell&quot;</span> <span class="na">type=</span><span class="s">&quot;solr.TextField&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;false&quot;</span> <span class="na">multiValued=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;spell_en&quot;</span> <span class="na">type=</span><span class="s">&quot;solr.TextField&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;false&quot;</span> <span class="na">multiValued=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;spell_de&quot;</span> <span class="na">type=</span><span class="s">&quot;solr.TextField&quot;</span> <span class="na">indexed=</span><span class="s">&quot;true&quot;</span> <span class="na">stored=</span><span class="s">&quot;false&quot;</span> <span class="na">multiValued=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p><strong> 4. In your application which generates Solr queries and communicatates to Solr server add &amp;spellcheck.dictionary=spell_<em> param to search query
+depending on language. </em>Please note that if you will note provide this parameter default spellchecker will be used which contain
+wrong index!!!* </strong></p>
+<h3>Conclusion</h3>
+<p><strong> Multicore approach </strong></p>
+<ul>
+<li>Very easy and straightforward way to start playing with. Requires almost ZERO configuration efforts and do not require deep
+understanding of Solr configuration options;</li>
+<li>However you migh already guess that this approach has at least one main disadvantage which is <em>maintanance</em> and 
+it will <em>increase proportionally to the amout of languages you will have to deal with</em>;</li>
+</ul>
+<p><strong> Single core approach with language separation by document language field </strong></p>
+<ul>
+<li>Requires a bit more configuration and understanding of Solr in the beginning;</li>
+<li>Easy to maintain/deploy;</li>
+</ul>
+<p>In my opinion both approaches fit nicely to any number of languages, however I would preferably use second one due to
+maintainance costs reasons.</p>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+			<h2>Comments</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+				var disqus_identifier = "multi-language-handling-in-solr.html";
+				var disqus_url = "http://pavelbogomolenko.github.io/multi-language-handling-in-solr.html";
+				(function() {
+				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://pavlobogomolenko.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			</script>
+		</div>
+
+	</article>
+</div>
+					<div class="span3">
+						<div class="tagcloud">
+							<h2>Tag cloud</h2>
+							<ul>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+							</ul>
+						</div>
+
+						<div class="social">
+							<h2>Social</h2>
+							<ul>
+									<li><a href="https://twitter.com/pbogomolenko">twitter</a></li>
+									<li><a href="http://www.linkedin.com/profile/view?id=222350828">linkedin</a></li>
+									<li><a href="https://www.xing.com/profiles/Pavlo_Bogomolenko">xing</a></li>
+							</ul>
+						</div><!-- /.social -->
+
+						<div class="twitter-widget">
+							<a class="twitter-timeline" href="https://twitter.com/pbogomolenko" data-widget-id="385711764647600128">Tweets by @pbogomolenko</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<footer id="footer" class="body">
+		<p>
+		Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+		</p>
+	</footer>
+
+	<script type="text/javascript">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-44618483-1', 'pavelbogomolenko.github.io');
+		ga('send', 'pageview');
+
+	</script>
+<script type="text/javascript">
+    var disqus_shortname = 'pavlobogomolenko';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
