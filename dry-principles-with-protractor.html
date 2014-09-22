@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>DRY principles with Protractor e2e testing framework</title>
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
+	<!-- <link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap-responsive.min.css" /> -->
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
+
+	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
+	<link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Pavlo Bogomolenko's Blog RSS Feed" />
+</head>
+
+<body id="index" class="home">
+<a href="https://github.com/pavelbogomolenko">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+	<header id="banner" class="body">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-inner">
+				<div class="container">
+					<!--
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					-->
+					<a class="brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
+					<div class="nav-collapse collapse">
+					<ul class="nav">
+							<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
+					</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<ul>
+				</ul>
+	</header><!-- /#banner -->
+	
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<div class="row">
+					<div class="span9">	<article>
+		<header>
+			<h1 class="entry-title">
+			<a href="http://pavelbogomolenko.github.io/dry-principles-with-protractor.html" rel="bookmark"
+			title="Permalink to DRY principles with Protractor e2e testing framework">DRY principles with Protractor e2e testing framework</a></h1>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="pbogomolenko">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		</header>
+
+		<div class="entry-content">
+<footer class="post-info">
+	<div class="published" title="2014-09-22T22:53:00">
+		22 September 2014 22:53
+	</div>
+
+	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine&nbsp;</a></div>	
+</footer><!-- /.post-info -->			<p>This article describes concepts of DRY(Don't repeat yourself) principle which can be applied when writing e2e tests for 
+AngularJS application.</p>
+<p>First of all writing e2e tests is very straitforward task thats why developers often trying to implement them without 
+thinking of code reuse and following main principle of "copy-past". To some point it could work untill certain part
+of your appplication would be re-implemented and will have new behaviour. </p>
+<p>Enough lyrics. Lets look at very common use case. So, lets say your application has a login functionality and each of your tests
+will rely on the fact that you will be logged-in and will able to access login-protected areas.</p>
+<p>Here is one possible implementation:</p>
+<div class="highlight"><pre><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;login suite&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">protractor</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">loginButton</span> <span class="o">=</span> <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;#submitButton&#39;</span><span class="p">)).</span><span class="nx">click</span><span class="p">();</span>
+
+    <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">protractor</span> <span class="o">=</span> <span class="nx">protractor</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="c1">//e.g. we need to have &quot;clean&quot; state after execution of each test - no auth cookies </span>
+        <span class="nx">protractor</span><span class="p">.</span><span class="nx">manage</span><span class="p">().</span><span class="nx">deleteAllCookies</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;can get content of protected page1&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">protractor</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/login-protected-page-1/&#39;</span><span class="p">);</span>
+
+        <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;model.login&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourlogin&#39;</span><span class="p">);</span>
+        <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="s1">&#39;model.password&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourpassword&#39;</span><span class="p">);</span>
+
+        <span class="nx">loginButton</span><span class="p">.</span><span class="nx">click</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">//the ONLY important part of your test</span>
+            <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+        <span class="p">});</span> 
+    <span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;can get content of protected page2&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">protractor</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/login-protected-page-2/&#39;</span><span class="p">);</span>
+
+        <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;model.login&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourlogin&#39;</span><span class="p">);</span>
+        <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="s1">&#39;model.password&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourpassword&#39;</span><span class="p">);</span>
+
+        <span class="nx">loginButton</span><span class="p">.</span><span class="nx">click</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">//the ONLY important part of your test</span>
+            <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+        <span class="p">});</span> 
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Now lets imagine that you have tons of parts in your web application that relies on login. Of course you can put all 
+test suites just in one file and use nice approach of nested suites ("describe"). But in the end you will get
+unmaintainable file with thousands lines ugly spaghetti code.</p>
+<p>What could help us here. Modularity and de-coupling or better divide and conquer principle.</p>
+<p>So lets get started. Lets first try to make login part reusable (login_test.js).</p>
+<div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">testName</span><span class="p">,</span> <span class="nx">loginProtectedUrl</span><span class="p">,</span> <span class="nx">testFn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;common login suite&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">protractor</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">loginButton</span> <span class="o">=</span> <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;#submitButton&#39;</span><span class="p">)).</span><span class="nx">click</span><span class="p">();</span>
+
+        <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">protractor</span> <span class="o">=</span> <span class="nx">protractor</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+        <span class="p">});</span>
+
+        <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="c1">//e.g. we need to have &quot;clean&quot; state after execution of each test - no auth cookies </span>
+            <span class="nx">protractor</span><span class="p">.</span><span class="nx">manage</span><span class="p">().</span><span class="nx">deleteAllCookies</span><span class="p">();</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="nx">testName</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">protractor</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">loginProtectedUrl</span><span class="p">);</span>
+
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;model.login&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourlogin&#39;</span><span class="p">);</span>
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="s1">&#39;model.password&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourpassword&#39;</span><span class="p">);</span>
+
+            <span class="nx">loginButton</span><span class="p">.</span><span class="nx">click</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">testFn</span><span class="p">(</span><span class="nx">protractor</span><span class="p">);</span>
+            <span class="p">});</span> 
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>And now lets re-write original e2e tests:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">loginSuite</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./login_test.js&#39;</span><span class="p">);</span>
+
+<span class="nx">loginSuite</span><span class="p">(</span><span class="s1">&#39;can get content of protected page1&#39;</span><span class="p">,</span> <span class="s1">&#39;/login-protected-page-1/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">protractorInstance</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">loginSuite</span><span class="p">(</span><span class="s1">&#39;can get content of protected page2&#39;</span><span class="p">,</span> <span class="s1">&#39;/login-protected-page-1/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">protractorInstance</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>That's pretty much of it. As a little bonus as you can see I pass back <em>protractorInstance</em> to callback function in order
+to have flexibility when you will need to have access to other Protactor functions.</p>
+<p>Cheers!</p>
+<p>Usefull links:</p>
+<ul>
+<li>http://jasmine.github.io/;</li>
+<li>https://github.com/angular/protractor</li>
+<li>https://docs.angularjs.org/guide/e2e-testing</li>
+<li>https://github.com/angular/protractor/blob/master/docs/api.md</li>
+</ul>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+			<h2>Comments</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+				var disqus_identifier = "dry-principles-with-protractor.html";
+				var disqus_url = "http://pavelbogomolenko.github.io/dry-principles-with-protractor.html";
+				(function() {
+				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://pavlobogomolenko.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			</script>
+		</div>
+
+	</article>
+</div>
+					<div class="span3">
+						<div class="tagcloud">
+							<h2>Tag cloud</h2>
+							<ul>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
+							</ul>
+						</div>
+
+						<div class="social">
+							<h2>Social</h2>
+							<ul>
+									<li><a href="https://twitter.com/pbogomolenko">twitter</a></li>
+									<li><a href="http://www.linkedin.com/profile/view?id=222350828">linkedin</a></li>
+									<li><a href="https://www.xing.com/profiles/Pavlo_Bogomolenko">xing</a></li>
+							</ul>
+						</div><!-- /.social -->
+
+						<div class="twitter-widget">
+							<a class="twitter-timeline" href="https://twitter.com/pbogomolenko" data-widget-id="385711764647600128">Tweets by @pbogomolenko</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<footer id="footer" class="body">
+		<p>
+		Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+		</p>
+	</footer>
+
+	<script type="text/javascript">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-44618483-1', 'pavelbogomolenko.github.io');
+		ga('send', 'pageview');
+
+	</script>
+<script type="text/javascript">
+    var disqus_shortname = 'pavlobogomolenko';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
