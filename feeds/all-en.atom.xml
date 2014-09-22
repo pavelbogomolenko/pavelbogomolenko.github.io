@@ -64,7 +64,6 @@ unmaintainable file with thousands lines ugly spaghetti code.&lt;/p&gt;
         &lt;span class="p"&gt;});&lt;/span&gt;
 
         &lt;span class="nx"&gt;afterEach&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
-            &lt;span class="c1"&gt;//e.g. we need to have &amp;quot;clean&amp;quot; state after execution of each test - no auth cookies &lt;/span&gt;
             &lt;span class="nx"&gt;protractor&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;manage&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;deleteAllCookies&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
         &lt;span class="p"&gt;});&lt;/span&gt;
 
@@ -75,6 +74,7 @@ unmaintainable file with thousands lines ugly spaghetti code.&lt;/p&gt;
             &lt;span class="nx"&gt;element&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;by&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;model.password&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;&lt;span class="nx"&gt;sendKeys&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;yourpassword&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 
             &lt;span class="nx"&gt;loginButton&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;click&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="c1"&gt;//call of actual test. And pass instance of protractor&lt;/span&gt;
                 &lt;span class="nx"&gt;testFn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;protractor&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
             &lt;span class="p"&gt;});&lt;/span&gt; 
         &lt;span class="p"&gt;});&lt;/span&gt;
@@ -101,12 +101,12 @@ unmaintainable file with thousands lines ugly spaghetti code.&lt;/p&gt;
 &lt;p&gt;That's pretty much of it. As a little bonus as you can see I pass back &lt;em&gt;protractorInstance&lt;/em&gt; to callback function in order
 to have flexibility when you will need to have access to other Protactor functions.&lt;/p&gt;
 &lt;p&gt;Cheers!&lt;/p&gt;
-&lt;p&gt;Usefull links:&lt;/p&gt;
+&lt;p&gt;Some usefull links:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;http://jasmine.github.io/;&lt;/li&gt;
-&lt;li&gt;https://github.com/angular/protractor&lt;/li&gt;
-&lt;li&gt;https://docs.angularjs.org/guide/e2e-testing&lt;/li&gt;
-&lt;li&gt;https://github.com/angular/protractor/blob/master/docs/api.md&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://jasmine.github.io/"&gt;Jasmine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/angular/protractor"&gt;Protractor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.angularjs.org/guide/e2e-testing"&gt;e2e testing with Protractor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/angular/protractor/blob/master/docs/api.md"&gt;Protractor API&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</summary><category term="AngularJS"></category><category term="e2e"></category><category term="Protractor"></category><category term="Testing"></category><category term="Node.js"></category><category term="BDD"></category><category term="Jasmine"></category></entry><entry><title>Multi language handling in Solr</title><link href="http://pavelbogomolenko.github.io/multi-language-handling-in-solr.html" rel="alternate"></link><updated>2013-12-28T11:10:00+01:00</updated><author><name>Pavlo Bogomolenko</name></author><id>tag:pavelbogomolenko.github.io,2013-12-28:multi-language-handling-in-solr.html</id><summary type="html">&lt;p&gt;If you are building full-text search application for your website on top of &lt;a href="http://lucene.apache.org/solr/"&gt;Apache Solr&lt;/a&gt; once you will definitly face 
 the problem on how to handle multiple language. There are at least 2 possibilities how to do it and here I will
 describe you both of them with possible bottlnecks you might have and solutions to upcoming problems.&lt;/p&gt;

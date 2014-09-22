@@ -125,7 +125,6 @@ unmaintainable file with thousands lines ugly spaghetti code.</p>
         <span class="p">});</span>
 
         <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-            <span class="c1">//e.g. we need to have &quot;clean&quot; state after execution of each test - no auth cookies </span>
             <span class="nx">protractor</span><span class="p">.</span><span class="nx">manage</span><span class="p">().</span><span class="nx">deleteAllCookies</span><span class="p">();</span>
         <span class="p">});</span>
 
@@ -136,6 +135,7 @@ unmaintainable file with thousands lines ugly spaghetti code.</p>
             <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="s1">&#39;model.password&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourpassword&#39;</span><span class="p">);</span>
 
             <span class="nx">loginButton</span><span class="p">.</span><span class="nx">click</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="c1">//call of actual test. And pass instance of protractor</span>
                 <span class="nx">testFn</span><span class="p">(</span><span class="nx">protractor</span><span class="p">);</span>
             <span class="p">});</span> 
         <span class="p">});</span>
@@ -162,12 +162,12 @@ unmaintainable file with thousands lines ugly spaghetti code.</p>
 <p>That's pretty much of it. As a little bonus as you can see I pass back <em>protractorInstance</em> to callback function in order
 to have flexibility when you will need to have access to other Protactor functions.</p>
 <p>Cheers!</p>
-<p>Usefull links:</p>
+<p>Some usefull links:</p>
 <ul>
-<li>http://jasmine.github.io/;</li>
-<li>https://github.com/angular/protractor</li>
-<li>https://docs.angularjs.org/guide/e2e-testing</li>
-<li>https://github.com/angular/protractor/blob/master/docs/api.md</li>
+<li><a href="http://jasmine.github.io/">Jasmine</a></li>
+<li><a href="https://github.com/angular/protractor">Protractor</a></li>
+<li><a href="https://docs.angularjs.org/guide/e2e-testing">e2e testing with Protractor</a></li>
+<li><a href="https://github.com/angular/protractor/blob/master/docs/api.md">Protractor API</a></li>
 </ul>
 		</div><!-- /.entry-content -->
 		<div class="comments">
@@ -190,22 +190,22 @@ to have flexibility when you will need to have access to other Protactor functio
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
-									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
 							</ul>
 						</div>
 
