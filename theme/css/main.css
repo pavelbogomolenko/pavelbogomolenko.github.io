@@ -1,4 +1,5 @@
-@import url("pygment.css");
+/*pygments default css*/
+@import url("pygments.css");
 
 /*social*/
 div.social ul {
@@ -80,36 +81,6 @@ hr {
 	border-radius: 2px;
 }
 
-/*anchors*/
-a {outline: 0;}
-a img {border: 0px; text-decoration: none;}
-a:link, a:visited {
-	text-decoration: none;
-}
-
-a:hover {
-	background-color: #08c;
-	color: #fff;
-	text-decoration: none;
-	text-shadow: 1px 1px 1px #cecece;
-}
-
-h1 a:hover {
-	background: none;
-	color: #08c;
-	font-weight: bold;
-	text-decoration: underline;
-}
-
-a.brand:hover {
-	background: none;
-}
-
-.social a:hover {
-	background-color: transparent;
-	color: #08c;
-}
-
 /*about page*/
 #about-author .photo {
 	border: 1px solid #ddd; 
@@ -137,5 +108,4 @@ a.brand:hover {
 /* reset bootstrap */
 pre {
 	background: none;
-	color:white;
 }

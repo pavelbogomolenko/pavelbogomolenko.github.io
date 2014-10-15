@@ -4,7 +4,6 @@
 	<meta charset="utf-8" />
 	<title>Multi language handling in Solr</title>
 	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
-	<!-- <link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap-responsive.min.css" /> -->
 	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
 
 	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
@@ -13,38 +12,34 @@
 
 <body id="index" class="home">
 <a href="https://github.com/pavelbogomolenko">
-<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+<img style="position: absolute; top: 0; right: 0; border: 0; z-index: 99" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
 </a>
-	<header id="banner" class="body">
-		<div class="navbar navbar-inverse">
-			<div class="navbar-inner">
-				<div class="container">
-					<!--
-					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					-->
-					<a class="brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
-					<div class="nav-collapse collapse">
-					<ul class="nav">
-							<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
-					</ul>
-					</div><!--/.nav-collapse -->
-				</div>
-			</div>
-		</div>
 
-		<ul>
+	<nav class="navbar navbar-default" role="navigation">
+    	<div class="container-fluid">
+    		<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+			    <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			    <a class="navbar-brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
+		    </div>
+
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+						<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
 				</ul>
-	</header><!-- /#banner -->
+			</div><!--/.nav-collapse -->
+		</div> <!-- /.container-fluid -->			
+	</nav><!-- /#banner -->
 	
 	<div class="container">
 		<div class="row">
-			<div class="span12">
+			<div class="col-md-12">
 				<div class="row">
-					<div class="span9">	<article>
+					<div class="col-md-10">	<article>
 		<header>
 			<h1 class="entry-title">
 			<a href="http://pavelbogomolenko.github.io/multi-language-handling-in-solr.html" rel="bookmark"
@@ -214,26 +209,26 @@ maintainance costs reasons.</p>
 
 	</article>
 </div>
-					<div class="span3">
+					<div class="col-md-2">
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
-									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
 							</ul>
 						</div>
 
