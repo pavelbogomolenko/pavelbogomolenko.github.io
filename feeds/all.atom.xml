@@ -77,7 +77,7 @@ test suites without loosing in readability and keeping our code clean and DRY. &
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;em&gt;Main difference here from original code is that we return Promise object which will be fulllfilled on login form
+&lt;p&gt;&lt;em&gt;Main difference here from original code is that we return Promise object which will be fullfilled on login form
 submission event.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;And now time to re-write "assertion part" of our original test suite:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;loginSuite&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;./login_test.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
