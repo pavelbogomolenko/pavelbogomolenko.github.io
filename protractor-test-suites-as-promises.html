@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>DRY principles with Protractor e2e testing framework</title>
+	<title>Protractor test suites as Promises</title>
 	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
 
@@ -42,27 +42,28 @@
 					<div class="col-md-10">	<article>
 		<header>
 			<h1 class="entry-title">
-			<a href="http://pavelbogomolenko.github.io/dry-principles-with-protractor.html" rel="bookmark"
-			title="Permalink to DRY principles with Protractor e2e testing framework">DRY principles with Protractor e2e testing framework</a></h1>
+			<a href="http://pavelbogomolenko.github.io/protractor-test-suites-as-promises.html" rel="bookmark"
+			title="Permalink to Protractor test suites as Promises">Protractor test suites as Promises</a></h1>
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="pbogomolenko">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 		</header>
 
 		<div class="entry-content">
 <footer class="post-info">
-	<div class="published" title="2014-09-22T22:53:00">
-		22 September 2014 22:53
+	<div class="published" title="2014-10-19T21:30:00">
+		19 October 2014 21:30
 	</div>
 
 	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
-<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine&nbsp;</a></div>	
-</footer><!-- /.post-info -->			<p>This article describes concepts of DRY(Don't repeat yourself) principle which can be applied when writing e2e tests for 
-AngularJS application.</p>
-<p>First of all writing e2e tests is very straitforward task thats why developers often trying to implement them without 
-thinking of code reuse and following main principle of "copy-past". To some point it could work untill certain part
-of your appplication would be re-implemented and will have new behaviour. </p>
-<p>Enough lyrics. Lets look at very common use case. So, lets say your application has a login functionality and each of your tests
-will rely on the fact that you will be logged-in and will able to access login-protected areas.</p>
-<p>Here is one possible implementation:</p>
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises&nbsp;</a></div>	
+</footer><!-- /.post-info -->			<p>In this article I will demonstrate you another way how to write effective and re-usables tests using Protractor.
+In general this post can be treated as smooth continuation of my previous article about 
+<a href="http://pavelbogomolenko.github.io/dry-principles-with-protractor.html">DRY principles with Protractor e2e testing framework</a>.
+But this time I will show you how to use Promises as more effective way of dealing with results of evalutions of test suites 
+and how to combine test suites togther.</p>
+<p>As of scenario for our test let's again assume that our imaginary web application that we want to test has a login 
+functionality. In other words each test that we want to implement should pass authorization first.</p>
+<p>Let's implement this.</p>
+<p>For this purpose I will use the same "login suite" as in <a href="http://pavelbogomolenko.github.io/dry-principles-with-protractor.html">previous article</a>:</p>
 <div class="highlight"><pre><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;login suite&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">protractor</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">loginButton</span> <span class="o">=</span> <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;#submitButton&#39;</span><span class="p">)).</span><span class="nx">click</span><span class="p">();</span>
@@ -105,72 +106,73 @@ will rely on the fact that you will be logged-in and will able to access login-p
 </pre></div>
 
 
-<p>Now lets imagine that you have tons of parts in your web application that relies on login. Of course you can put all 
-test suites just in one file and use nice approach of nested suites ("describe"). But in the end you will get
-unmaintainable file with thousands lines ugly spaghetti code.</p>
-<p>What could help us here. Modularity and de-coupling or better divide and conquer principle.</p>
-<p>So lets get started. Lets first try to make login part reusable (login_test.js).</p>
-<div class="highlight"><pre><span class="n">module</span><span class="p">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">testName</span><span class="p">,</span> <span class="n">loginProtectedUrl</span><span class="p">,</span> <span class="n">testFn</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">describe</span><span class="p">(</span><span class="c">&#39;common login suite&#39;, function() {</span>
-        <span class="n">var</span> <span class="n">protractor</span><span class="err">;</span>
-        <span class="n">var</span> <span class="n">loginButton</span> <span class="o">=</span> <span class="n">element</span><span class="p">(</span><span class="n">by</span><span class="p">.</span><span class="n">css</span><span class="p">(</span><span class="c">&#39;#submitButton&#39;)).click();</span>
+<p>Ok. Nothing special here. Now let's have a look how we could improve this code in order to use login in other
+test suites without loosing in readability and keeping our code clean and DRY. </p>
+<p>This time we will apply power of Promises.</p>
+<p>Let's re-write first "Login part" (login_test.js):</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">loginSuite</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">suiteName</span><span class="p">,</span> <span class="nx">specName</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">protractor</span><span class="p">.</span><span class="nx">promise</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
 
-        <span class="n">beforeEach</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span>
-            <span class="n">protractor</span> <span class="o">=</span> <span class="n">protractor</span><span class="p">.</span><span class="n">getInstance</span><span class="p">()</span><span class="err">;</span>
-        <span class="p">})</span><span class="err">;</span>
+    <span class="nx">describe</span><span class="p">(</span><span class="nx">suiteName</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">prot</span> <span class="o">=</span> <span class="nx">protractor</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
 
-        <span class="n">afterEach</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span>
-            <span class="n">protractor</span><span class="p">.</span><span class="n">manage</span><span class="p">().</span><span class="n">deleteAllCookies</span><span class="p">()</span><span class="err">;</span>
-        <span class="p">})</span><span class="err">;</span>
+        <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">protractor</span><span class="p">.</span><span class="nx">manage</span><span class="p">().</span><span class="nx">deleteAllCookies</span><span class="p">();</span>
+        <span class="p">});</span>
 
-        <span class="n">it</span><span class="p">(</span><span class="n">testName</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="n">protractor</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">loginProtectedUrl</span><span class="p">)</span><span class="err">;</span>
+        <span class="nx">it</span><span class="p">(</span><span class="nx">specName</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">prot</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;model.username&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourlogin&#39;</span><span class="p">);</span>
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;model.password&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourpassword&#39;</span><span class="p">);</span>
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">id</span><span class="p">(</span><span class="s1">&#39;loginButton&#39;</span><span class="p">)).</span><span class="nx">click</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">defer</span><span class="p">.</span><span class="nx">fulfill</span><span class="p">,</span> <span class="nx">defer</span><span class="p">.</span><span class="nx">reject</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
 
-            <span class="n">element</span><span class="p">(</span><span class="n">by</span><span class="p">.</span><span class="n">model</span><span class="p">(</span><span class="c">&#39;model.login&#39;)).sendKeys(&#39;yourlogin&#39;);</span>
-            <span class="n">element</span><span class="p">(</span><span class="n">by</span><span class="p">.</span><span class="n">input</span><span class="p">(</span><span class="c">&#39;model.password&#39;)).sendKeys(&#39;yourpassword&#39;);</span>
-
-            <span class="n">loginButton</span><span class="p">.</span><span class="n">click</span><span class="p">().</span><span class="n">then</span><span class="p">(</span><span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="o">//</span><span class="k">call</span> <span class="k">of</span> <span class="n">actual</span> <span class="n">test</span><span class="p">.</span> <span class="ow">And</span> <span class="n">pass</span> <span class="n">instance</span> <span class="k">of</span> <span class="n">protractor</span>
-                <span class="n">testFn</span><span class="p">(</span><span class="n">protractor</span><span class="p">)</span><span class="err">;</span>
-            <span class="p">})</span><span class="err">;</span> 
-        <span class="p">})</span><span class="err">;</span>
-    <span class="p">})</span><span class="err">;</span>
-<span class="p">}</span>
+    <span class="k">return</span> <span class="nx">defer</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 
-<p>And now lets re-write original e2e tests:</p>
+<p><em>Main difference here from original code is that we return Promise object which will be fulllfilled on login form
+submission event.</em></p>
+<p>And now time to re-write "assertion part" of our original test suite:</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">loginSuite</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./login_test.js&#39;</span><span class="p">);</span>
 
-<span class="nx">loginSuite</span><span class="p">(</span><span class="s1">&#39;can get content of protected page1&#39;</span><span class="p">,</span> <span class="s1">&#39;/login-protected-page-1/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">protractorInstance</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
-    <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
-<span class="p">});</span>
+<span class="nx">loginSuite</span><span class="p">(</span><span class="s1">&#39;suite for page1&#39;</span><span class="p">,</span> <span class="s1">&#39;can get content of protected page1&#39;</span><span class="p">,</span> <span class="s1">&#39;/login-protected-page-1/&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span>
+        <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">);</span>
 
-<span class="nx">loginSuite</span><span class="p">(</span><span class="s1">&#39;can get content of protected page2&#39;</span><span class="p">,</span> <span class="s1">&#39;/login-protected-page-1/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">protractorInstance</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
-    <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
-<span class="p">});</span>
+<span class="nx">loginSuite</span><span class="p">(</span><span class="s1">&#39;suite for page2&#39;</span><span class="p">,</span> <span class="s1">&#39;can get content of protected page2&#39;</span><span class="p">,</span> <span class="s1">&#39;/login-protected-page-2/&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span>
+        <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">elems</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">repeater</span><span class="p">(</span><span class="s1">&#39;d in data&#39;</span><span class="p">));</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">elems</span><span class="p">.</span><span class="nx">count</span><span class="p">()).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">);</span>
 </pre></div>
 
 
-<p>That's pretty much of it. As a little bonus as you can see I pass back <em>protractorInstance</em> to callback function in order
-to have flexibility when you will need to have access to other Protactor functions.</p>
-<p>Cheers!</p>
+<p>That's was it.</p>
+<p>In conclusion I would say that using Promises in test suites in favor of callbacks in Protractor looks 
+more natural (in fact whole Protractor API utilize promises). Especially in situations when you will start to implement 
+more complex scenarious where one suites will rely on multiple other suites. This would definitely make debugging and implementation much more easier.</p>
 <p>Some usefull links:</p>
 <ul>
-<li><a href="http://jasmine.github.io/">Jasmine</a></li>
-<li><a href="https://github.com/angular/protractor">Protractor</a></li>
 <li><a href="https://docs.angularjs.org/guide/e2e-testing">e2e testing with Protractor</a></li>
 <li><a href="https://github.com/angular/protractor/blob/master/docs/api.md">Protractor API</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Javascript Promises</a></li>
 </ul>
 		</div><!-- /.entry-content -->
 		<div class="comments">
 			<h2>Comments</h2>
 			<div id="disqus_thread"></div>
 			<script type="text/javascript">
-				var disqus_identifier = "dry-principles-with-protractor.html";
-				var disqus_url = "http://pavelbogomolenko.github.io/dry-principles-with-protractor.html";
+				var disqus_identifier = "protractor-test-suites-as-promises.html";
+				var disqus_url = "http://pavelbogomolenko.github.io/protractor-test-suites-as-promises.html";
 				(function() {
 				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
 				dsq.src = 'http://pavlobogomolenko.disqus.com/embed.js';

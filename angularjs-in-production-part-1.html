@@ -49,8 +49,8 @@
 
 		<div class="entry-content">
 <footer class="post-info">
-	<div class="published" title="2013-10-04T11:05:00">
-		04 October 2013 11:05
+	<div class="published" title="2013-04-10T11:05:00">
+		10 April 2013 11:05
 	</div>
 
 	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
@@ -63,36 +63,36 @@ things you have to think about before implementation.</p>
 <p>So lets start.</p>
 <h4>Code structure</h4>
 <p>This is how your code structure might look like:</p>
-<div class="highlight"><pre><span class="n">AppRoot</span>
-<span class="err">├──</span> <span class="n">vendors</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">jquery</span>
-<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">jquery</span><span class="o">-</span><span class="mf">1.10.2</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span> <span class="err">└──</span> <span class="n">require</span>
-<span class="err">│  </span>     <span class="err">└──</span> <span class="n">require</span><span class="p">.</span><span class="n">js</span>
-<span class="err">├──</span> <span class="n">widgetapp</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">app</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">bootstrap</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">controllers</span>
-<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">widget</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">data</span>
-<span class="err">│  </span> <span class="err">│  </span> <span class="err">├──</span> <span class="n">config</span><span class="p">.</span><span class="n">json</span>
-<span class="err">│  </span> <span class="err">│  </span> <span class="err">├──</span> <span class="n">sample</span><span class="p">.</span><span class="n">json</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">models</span>
-<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">urlbuilder</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span> <span class="err">├──</span> <span class="n">services</span>
-<span class="err">│  </span> <span class="err">│  </span> <span class="err">└──</span> <span class="n">configurationresource</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span> <span class="err">└──</span> <span class="n">tests</span>
-<span class="err">│  </span>     <span class="err">├──</span> <span class="n">main</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span>     <span class="err">└──</span> <span class="n">unit</span>
-<span class="err">│  </span>         <span class="err">├──</span> <span class="n">controllers</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span>         <span class="err">├──</span> <span class="n">models</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span>         <span class="err">└──</span> <span class="n">modules</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
-<span class="err">│  </span>         <span class="err">└──</span> <span class="n">routes</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">js</span>
-<span class="err">├──</span> <span class="n">buildwidgetapp</span><span class="p">.</span><span class="n">js</span>
-<span class="err">├──</span> <span class="n">karma</span><span class="p">.</span><span class="n">conf</span><span class="p">.</span><span class="n">js</span>
-<span class="err">├──</span> <span class="n">package</span><span class="p">.</span><span class="n">json</span>
-<span class="err">└──</span> <span class="n">widgetapp</span><span class="p">.</span><span class="n">js</span>
+<div class="highlight"><pre>AppRoot
+├── vendors
+│   ├── angular-1.0.7
+│   ├── jquery
+│   │   └── jquery-1.10.2.js
+│   └── require
+│       └── require.js
+├── widgetapp
+│   ├── app.js
+│   ├── bootstrap.js
+│   ├── controllers
+│   │   └── widget.js
+│   ├── data
+│   │   ├── config.json
+│   │   ├── sample.json
+│   ├── models
+│   │   └── urlbuilder.js
+│   ├── services
+│   │   └── configurationresource.js
+│   └── tests
+│       ├── main.js
+│       └── unit
+│           ├── controllers.test.js
+│           ├── models.test.js
+│           └── modules.test.js
+│           └── routes.test.js
+├── buildwidgetapp.js
+├── karma.conf.js
+├── package.json
+└── widgetapp.js
 </pre></div>
 
 
@@ -167,22 +167,23 @@ and start writing your tests. This part I will try to cover in <a href="http://p
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
 							</ul>
 						</div>
 

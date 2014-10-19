@@ -49,8 +49,8 @@
 
 		<div class="entry-content">
 <footer class="post-info">
-	<div class="published" title="2013-10-12T04:35:00">
-		12 October 2013 04:35
+	<div class="published" title="2013-12-10T04:35:00">
+		10 December 2013 04:35
 	</div>
 
 	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
@@ -76,22 +76,22 @@ node is the preferred execution environment and the optimizer runs much faster w
 all our JS source files into one single file.</em></p>
 <p>Lets look how our configuration file can look like concidering our code structure from <a href="http://pavelbogomolenko.github.io/angularjs-in-production-part-1.html">part 1</a>
 of this series (buildwidgetapp.js)</p>
-<div class="highlight"><pre><span class="p">({</span>
-    <span class="nl">baseUrl:</span> <span class="s">&quot;.&quot;</span><span class="p">,</span>
-    <span class="nl">paths:</span> <span class="p">{</span>
-        <span class="nl">requireLib:</span> <span class="s">&quot;vendors/require/require&quot;</span>
-    <span class="p">},</span>
-    <span class="nl">mainConfigFile:</span> <span class="s">&quot;widgetapp.js&quot;</span><span class="p">,</span>
-    <span class="nl">name:</span> <span class="s">&quot;widgetapp&quot;</span><span class="p">,</span>
-    <span class="nl">out:</span> <span class="s">&quot;widgets.js&quot;</span>
-<span class="p">})</span>
+<div class="highlight"><pre>({
+    baseUrl: &quot;.&quot;,
+    paths: {
+        requireLib: &quot;vendors/require/require&quot;
+    },
+    mainConfigFile: &quot;widgetapp.js&quot;,
+    name: &quot;widgetapp&quot;,
+    out: &quot;widgets.js&quot;
+})
 </pre></div>
 
 
 <p>The most import option here is <strong>mainConfigFile</strong> which defines RequireJS configuration file we should use. Information
 about all possible configuration params you can read <a href="http://requirejs.org/docs/optimization.html">here</a>.</p>
 <p>Lets call an optimizer from command line:</p>
-<div class="highlight"><pre><span class="p">.</span><span class="o">/</span><span class="n">node_modules</span><span class="o">/</span><span class="n">requirejs</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">r</span><span class="p">.</span><span class="n">js</span> <span class="o">-</span><span class="n">o</span> <span class="n">buildwidgetapp</span><span class="p">.</span><span class="n">js</span> <span class="n">include</span><span class="o">=</span><span class="n">requireLib</span>
+<div class="highlight"><pre>./node_modules/requirejs/bin/r.js -o buildwidgetapp.js include=requireLib
 </pre></div>
 
 
@@ -102,39 +102,39 @@ the application) cause all apllication is relies on existence of RequireJS file.
 </ul>
 <p><strong>Continuous integration with Jenkins</strong></p>
 <p>Before creation of integration jobs lets remember how our Karma configuration file(karma.conf.js) look like:</p>
-<div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">config</span><span class="p">.</span><span class="nx">set</span><span class="p">({</span>
-        <span class="nx">frameworks</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;jasmine&#39;</span><span class="p">,</span> <span class="s1">&#39;requirejs&#39;</span><span class="cp">]</span><span class="p">,</span> <span class="c1">//js testing fromework to use</span>
-        <span class="c1">//appliction code structure</span>
-        <span class="nx">files</span><span class="o">:</span> <span class="cp">[</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/angular-1.0.7/angular.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/angular-1.0.7/angular-resource.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/angular-1.0.7/angular-mocks.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;vendors/jquery/jquery-1.10.2.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/*.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/controllers/*.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/models/*.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="p">{</span><span class="nx">pattern</span><span class="p">:</span><span class="s1">&#39;widgetapp/tests/unit/*test.js&#39;</span><span class="p">,</span> <span class="nx">included</span><span class="p">:</span> <span class="kc">false</span><span class="p">},</span>
-            <span class="s1">&#39;widgetapp/tests/main.js&#39;</span>
-        <span class="cp">]</span><span class="p">,</span>
-        <span class="c1">// list of files to exclude</span>
-        <span class="nx">exclude</span><span class="o">:</span> <span class="cp">[</span>
-            <span class="s1">&#39;widgetapp/bootstrap.js&#39;</span>
-        <span class="cp">]</span><span class="p">,</span>
-        <span class="c1">// test results reporter to use</span>
-        <span class="nx">reporters</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;junit&#39;</span><span class="cp">]</span><span class="p">,</span>
-        <span class="nx">port</span><span class="o">:</span> <span class="mi">9876</span><span class="p">,</span>
-        <span class="nx">colors</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="c1">//log level</span>
-        <span class="nx">logLevel</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_ERROR</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_WARN</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_INFO</span> <span class="o">||</span> <span class="nx">config</span><span class="p">.</span><span class="nx">LOG_DEBUG</span><span class="p">,</span>
-        <span class="nx">autoWatch</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-        <span class="nx">browsers</span><span class="o">:</span> <span class="cp">[</span><span class="s1">&#39;PhantomJS&#39;</span><span class="cp">]</span><span class="p">,</span> <span class="c1">//in which browser to test</span>
-        <span class="nx">captureTimeout</span><span class="o">:</span> <span class="mi">60000</span><span class="p">,</span>
-        <span class="c1">// if true, it capture browsers, run tests and exit. CI mode</span>
-        <span class="nx">singleRun</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="c1">//Test report XML</span>
-        <span class="nx">junitReporter</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">outputFile</span><span class="o">:</span> <span class="s1">&#39;test-results.xml&#39;</span>
+<div class="highlight"><pre><span class="n">module</span><span class="p">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">config</span><span class="p">.</span><span class="n">set</span><span class="p">({</span>
+        <span class="n">frameworks</span><span class="p">:</span> <span class="o">[</span><span class="c">&#39;jasmine&#39;, &#39;requirejs&#39;], //js testing fromework to use</span>
+        <span class="o">//</span><span class="n">appliction</span> <span class="n">code</span> <span class="k">structure</span>
+        <span class="nc">files</span><span class="p">:</span> <span class="o">[</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;vendors/angular-1.0.7/angular.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;vendors/angular-1.0.7/angular-resource.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;vendors/angular-1.0.7/angular-mocks.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;vendors/jquery/jquery-1.10.2.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;widgetapp/*.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;widgetapp/controllers/*.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;widgetapp/models/*.js&#39;, included: false},</span>
+            <span class="p">{</span><span class="n">pattern</span><span class="p">:</span><span class="c">&#39;widgetapp/tests/unit/*test.js&#39;, included: false},</span>
+            <span class="c">&#39;widgetapp/tests/main.js&#39;</span>
+        <span class="o">]</span><span class="p">,</span>
+        <span class="o">//</span> <span class="n">list</span> <span class="k">of</span> <span class="n">files</span> <span class="k">to</span> <span class="n">exclude</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="o">[</span>
+            <span class="c">&#39;widgetapp/bootstrap.js&#39;</span>
+        <span class="o">]</span><span class="p">,</span>
+        <span class="o">//</span> <span class="n">test</span> <span class="n">results</span> <span class="n">reporter</span> <span class="k">to</span> <span class="n">use</span>
+        <span class="n">reporters</span><span class="p">:</span> <span class="o">[</span><span class="c">&#39;junit&#39;],</span>
+        <span class="n">port</span><span class="p">:</span> <span class="mi">9876</span><span class="p">,</span>
+        <span class="n">colors</span><span class="p">:</span> <span class="k">true</span><span class="p">,</span>
+        <span class="o">//</span><span class="n">log</span> <span class="n">level</span>
+        <span class="n">logLevel</span><span class="p">:</span> <span class="n">config</span><span class="p">.</span><span class="n">LOG_ERROR</span> <span class="err">||</span> <span class="n">config</span><span class="p">.</span><span class="n">LOG_WARN</span> <span class="err">||</span> <span class="n">config</span><span class="p">.</span><span class="n">LOG_INFO</span> <span class="err">||</span> <span class="n">config</span><span class="p">.</span><span class="n">LOG_DEBUG</span><span class="p">,</span>
+        <span class="n">autoWatch</span><span class="p">:</span> <span class="k">false</span><span class="p">,</span>
+        <span class="n">browsers</span><span class="p">:</span> <span class="o">[</span><span class="c">&#39;PhantomJS&#39;], //in which browser to test</span>
+        <span class="n">captureTimeout</span><span class="p">:</span> <span class="mi">60000</span><span class="p">,</span>
+        <span class="o">//</span> <span class="k">if</span> <span class="k">true</span><span class="p">,</span> <span class="n">it</span> <span class="n">capture</span> <span class="n">browsers</span><span class="p">,</span> <span class="n">run</span> <span class="n">tests</span> <span class="ow">and</span> <span class="k">exit</span><span class="p">.</span> <span class="n">CI</span> <span class="n">mode</span>
+        <span class="n">singleRun</span><span class="p">:</span> <span class="k">true</span><span class="p">,</span>
+        <span class="o">//</span><span class="n">Test</span> <span class="n">report</span> <span class="n">XML</span>
+        <span class="n">junitReporter</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">outputFile</span><span class="p">:</span> <span class="c">&#39;test-results.xml&#39;</span>
         <span class="p">}</span>
     <span class="p">})</span>
 <span class="p">}</span>
@@ -145,15 +145,15 @@ the application) cause all apllication is relies on existence of RequireJS file.
 and in which file generate output.</p>
 <p>Than in Jenkins, start a new job for Angular/Karma with the basic settings (Name, description, parameters, source code repo to pull from, etc.)
 and in <strong>"Execute shell"</strong> shell setting add following code:</p>
-<div class="highlight"><pre><span class="n">cd</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">your</span><span class="o">/</span><span class="n">AppRoot</span><span class="o">/</span>
-<span class="n">npm</span> <span class="n">install</span> 
-<span class="p">.</span><span class="o">/</span><span class="n">node_modules</span><span class="o">/</span><span class="n">karma</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">karma</span> <span class="n">start</span>
-<span class="p">.</span><span class="o">/</span><span class="n">node_modules</span><span class="o">/</span><span class="n">requirejs</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">r</span><span class="p">.</span><span class="n">js</span> <span class="o">-</span><span class="n">o</span> <span class="n">buildwidgetapp</span><span class="p">.</span><span class="n">js</span> <span class="n">include</span><span class="o">=</span><span class="n">requireLib</span>
+<div class="highlight"><pre>cd path/to/your/AppRoot/
+npm install 
+./node_modules/karma/bin/karma start
+./node_modules/requirejs/bin/r.js -o buildwidgetapp.js include=requireLib
 </pre></div>
 
 
 <p>Define absolute path to your "test-results.xml"  in <em>Publish JUnit test result report</em> setting.</p>
-<div class="highlight"><pre><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">your</span><span class="o">/</span><span class="n">AppRoot</span><span class="o">/</span><span class="n">test</span><span class="o">-</span><span class="n">results</span><span class="p">.</span><span class="n">xml</span>
+<div class="highlight"><pre>path/to/your/AppRoot/test-results.xml
 </pre></div>
 
 
@@ -181,22 +181,23 @@ and our minified "widgets.js" file which we could include easily add to HTML and
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
 							</ul>
 						</div>
 
