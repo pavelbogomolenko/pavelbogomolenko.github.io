@@ -110,31 +110,31 @@ test suites just in one file and use nice approach of nested suites ("describe")
 unmaintainable file with thousands lines ugly spaghetti code.</p>
 <p>What could help us here. Modularity and de-coupling or better divide and conquer principle.</p>
 <p>So lets get started. Lets first try to make login part reusable (login_test.js).</p>
-<div class="highlight"><pre><span class="n">module</span><span class="p">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">testName</span><span class="p">,</span> <span class="n">loginProtectedUrl</span><span class="p">,</span> <span class="n">testFn</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">describe</span><span class="p">(</span><span class="c">&#39;common login suite&#39;, function() {</span>
-        <span class="n">var</span> <span class="n">protractor</span><span class="err">;</span>
-        <span class="n">var</span> <span class="n">loginButton</span> <span class="o">=</span> <span class="n">element</span><span class="p">(</span><span class="n">by</span><span class="p">.</span><span class="n">css</span><span class="p">(</span><span class="c">&#39;#submitButton&#39;)).click();</span>
+<div class="highlight"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">testName</span><span class="p">,</span> <span class="nx">loginProtectedUrl</span><span class="p">,</span> <span class="nx">testFn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;common login suite&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">protractor</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">loginButton</span> <span class="o">=</span> <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;#submitButton&#39;</span><span class="p">)).</span><span class="nx">click</span><span class="p">();</span>
 
-        <span class="n">beforeEach</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span>
-            <span class="n">protractor</span> <span class="o">=</span> <span class="n">protractor</span><span class="p">.</span><span class="n">getInstance</span><span class="p">()</span><span class="err">;</span>
-        <span class="p">})</span><span class="err">;</span>
+        <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">protractor</span> <span class="o">=</span> <span class="nx">protractor</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+        <span class="p">});</span>
 
-        <span class="n">afterEach</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span>
-            <span class="n">protractor</span><span class="p">.</span><span class="n">manage</span><span class="p">().</span><span class="n">deleteAllCookies</span><span class="p">()</span><span class="err">;</span>
-        <span class="p">})</span><span class="err">;</span>
+        <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">protractor</span><span class="p">.</span><span class="nx">manage</span><span class="p">().</span><span class="nx">deleteAllCookies</span><span class="p">();</span>
+        <span class="p">});</span>
 
-        <span class="n">it</span><span class="p">(</span><span class="n">testName</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="n">protractor</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">loginProtectedUrl</span><span class="p">)</span><span class="err">;</span>
+        <span class="nx">it</span><span class="p">(</span><span class="nx">testName</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">protractor</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">loginProtectedUrl</span><span class="p">);</span>
 
-            <span class="n">element</span><span class="p">(</span><span class="n">by</span><span class="p">.</span><span class="n">model</span><span class="p">(</span><span class="c">&#39;model.login&#39;)).sendKeys(&#39;yourlogin&#39;);</span>
-            <span class="n">element</span><span class="p">(</span><span class="n">by</span><span class="p">.</span><span class="n">input</span><span class="p">(</span><span class="c">&#39;model.password&#39;)).sendKeys(&#39;yourpassword&#39;);</span>
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;model.login&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourlogin&#39;</span><span class="p">);</span>
+            <span class="nx">element</span><span class="p">(</span><span class="nx">by</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="s1">&#39;model.password&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;yourpassword&#39;</span><span class="p">);</span>
 
-            <span class="n">loginButton</span><span class="p">.</span><span class="n">click</span><span class="p">().</span><span class="n">then</span><span class="p">(</span><span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="o">//</span><span class="k">call</span> <span class="k">of</span> <span class="n">actual</span> <span class="n">test</span><span class="p">.</span> <span class="ow">And</span> <span class="n">pass</span> <span class="n">instance</span> <span class="k">of</span> <span class="n">protractor</span>
-                <span class="n">testFn</span><span class="p">(</span><span class="n">protractor</span><span class="p">)</span><span class="err">;</span>
-            <span class="p">})</span><span class="err">;</span> 
-        <span class="p">})</span><span class="err">;</span>
-    <span class="p">})</span><span class="err">;</span>
+            <span class="nx">loginButton</span><span class="p">.</span><span class="nx">click</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="c1">//call of actual test. And pass instance of protractor</span>
+                <span class="nx">testFn</span><span class="p">(</span><span class="nx">protractor</span><span class="p">);</span>
+            <span class="p">});</span> 
+        <span class="p">});</span>
+    <span class="p">});</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -185,23 +185,23 @@ to have flexibility when you will need to have access to other Protactor functio
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
-									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
 									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
 									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
 							</ul>
 						</div>
 

@@ -102,43 +102,37 @@ things you have to think about before implementation.</p>
 libraries dependencies. Likely AngularJS is build to support <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Asynchronous Module Definition</a> 
 and therefore we would you use <a href="http://requirejs.org/">RequireJS</a> to achive this.</p>
 <p>So lets define RequireJS configuration file(widgetapp.js):</p>
-<div class="highlight"><pre><span class="c1">//require config</span>
-<span class="n">requirejs</span><span class="p">.</span><span class="k">config</span><span class="p">({</span>
+<div class="highlight"><pre><span class="nx">requirejs</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
         <span class="c1">//By default load any module from js path</span>
-        <span class="nl">baseUrl:</span> <span class="p">&#39;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">your</span><span class="o">/</span><span class="n">application</span><span class="o">/</span><span class="n">AppRoot</span><span class="p">&#39;,</span>
+        <span class="nx">baseUrl</span><span class="o">:</span> <span class="s1">&#39;path/to/your/application/AppRoot&#39;</span><span class="p">,</span>
         <span class="c1">//configure dependencies</span>
-        <span class="nl">shim:</span> <span class="p">{</span>
-                <span class="nl">angular:</span> <span class="p">{</span><span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">&#39;},</span>
-                <span class="nl">ngResource:</span> <span class="p">{</span>
-                        <span class="nl">deps:</span> <span class="p">[&#39;</span><span class="n">angular</span><span class="p">&#39;],</span>
-                        <span class="nl">exports:</span> <span class="p">&#39;</span><span class="n">angular</span><span class="p">&#39;</span>
+        <span class="nx">shim</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">angular</span><span class="o">:</span> <span class="p">{</span><span class="nx">exports</span><span class="o">:</span> <span class="s1">&#39;angular&#39;</span><span class="p">},</span>
+                <span class="nx">ngResource</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="nx">deps</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;angular&#39;</span><span class="p">],</span>
+                        <span class="nx">exports</span><span class="o">:</span> <span class="s1">&#39;angular&#39;</span>
                 <span class="p">},</span>
-                <span class="c1">//ngSanitize: {</span>
-                <span class="c1">//      deps: [&#39;angular&#39;],</span>
-                <span class="c1">//      exports: &#39;angular&#39;</span>
-                <span class="c1">//},</span>
-                <span class="nl">jq:</span> <span class="p">{&#39;</span><span class="n">exports</span><span class="p">&#39;</span> <span class="o">:</span> <span class="p">&#39;</span><span class="n">jQuery</span><span class="p">&#39;}</span>
+                <span class="nx">jq</span><span class="o">:</span> <span class="p">{</span><span class="s1">&#39;exports&#39;</span> <span class="o">:</span> <span class="s1">&#39;jQuery&#39;</span><span class="p">}</span>
         <span class="p">},</span>
         <span class="c1">//configure additional paths from where to load modules</span>
-        <span class="nl">paths:</span> <span class="p">{</span>
-                <span class="nl">angular:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="p">&#39;,</span>
-                <span class="nl">ngResource:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="mf">1.0.7</span><span class="o">/</span><span class="n">angular</span><span class="o">-</span><span class="n">resource</span><span class="p">&#39;,</span>
+        <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">angular</span><span class="o">:</span> <span class="s1">&#39;vendors/angular-1.0.7/angular&#39;</span><span class="p">,</span>
+                <span class="nx">ngResource</span><span class="o">:</span> <span class="s1">&#39;vendors/angular-1.0.7/angular-resource&#39;</span><span class="p">,</span>
                 <span class="c1">//ngSanitize: &#39;vendors/angular-1.0.7/angular-sanitize&#39;,</span>
-                <span class="nl">jq:</span> <span class="p">&#39;</span><span class="n">vendors</span><span class="o">/</span><span class="n">jquery</span><span class="o">/</span><span class="n">jquery</span><span class="o">-</span><span class="mf">1.10.2</span><span class="p">&#39;</span>
+                <span class="nx">jq</span><span class="o">:</span> <span class="s1">&#39;vendors/jquery/jquery-1.10.2&#39;</span>
         <span class="p">}</span>
 <span class="p">});</span>
 
 <span class="c1">//init application</span>
-<span class="n">require</span><span class="p">([&#39;</span><span class="n">widgetapp</span><span class="o">/</span><span class="n">bootstrap</span><span class="p">&#39;],</span> <span class="k">function</span><span class="p">()</span> <span class="p">{});</span>
+<span class="nx">require</span><span class="p">([</span><span class="s1">&#39;widgetapp/bootstrap&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{});</span>
 </pre></div>
 
 
 <p>And here are our demo bootstrap file(widgetapp/bootstrap.js):</p>
 <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;widgetapp/bootstrap&#39;</span><span class="p">,</span>
-        <span class="cp">[</span><span class="s1">&#39;angular&#39;</span><span class="p">,</span> <span class="s1">&#39;jq&#39;</span><span class="p">,</span> <span class="s1">&#39;widgetapp/services/configurationresource&#39;</span><span class="p">,</span> <span class="s1">&#39;widgetapp/app&#39;</span><span class="cp">]</span><span class="p">,</span>
+        <span class="p">[</span><span class="s1">&#39;angular&#39;</span><span class="p">,</span> <span class="s1">&#39;jq&#39;</span><span class="p">,</span> <span class="s1">&#39;widgetapp/services/configurationresource&#39;</span><span class="p">,</span> <span class="s1">&#39;widgetapp/app&#39;</span><span class="p">],</span>
         <span class="kd">function</span><span class="p">(</span><span class="nx">angular</span><span class="p">,</span> <span class="nx">jq</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">App</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">//application initialization goes here</span>
-            <span class="c1">//reading configuration, routes and etc</span>
         <span class="p">}</span>
 <span class="p">);</span>
 </pre></div>
@@ -167,23 +161,23 @@ and start writing your tests. This part I will try to cover in <a href="http://p
 						<div class="tagcloud">
 							<h2>Tag cloud</h2>
 							<ul>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
-									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
 									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
 									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
-									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
 									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
-									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
 							</ul>
 						</div>
 
