@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Introduction to Functional Programming in JS (part 1)</title>
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="http://pavelbogomolenko.github.io/theme/css/main.css" />
+
+	<link href="http://pavelbogomolenko.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pavlo Bogomolenko's Blog Atom Feed" />
+	<link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Pavlo Bogomolenko's Blog RSS Feed" />
+</head>
+
+<body id="index" class="home">
+<a href="https://github.com/pavelbogomolenko">
+<img style="position: absolute; top: 0; right: 0; border: 0; z-index: 99" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+
+	<nav class="navbar navbar-default" role="navigation">
+    	<div class="container-fluid">
+    		<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+			    <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			    <a class="navbar-brand" href="http://pavelbogomolenko.github.io/">Pavlo Bogomolenko's Blog </a>
+		    </div>
+
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+						<li><a href="http://pavelbogomolenko.github.io/pages/about-me-and-this-blog.html">About me</a></li>
+				</ul>
+			</div><!--/.nav-collapse -->
+		</div> <!-- /.container-fluid -->			
+	</nav><!-- /#banner -->
+	
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-10">	<article>
+		<header>
+			<h1 class="entry-title">
+			<a href="http://pavelbogomolenko.github.io/introduction-to-functional-programming-in-javascript-1.html" rel="bookmark"
+			title="Permalink to Introduction to Functional Programming in JS (part 1)">Introduction to Functional Programming in JS (part 1)</a></h1>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="pbogomolenko">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		</header>
+
+		<div class="entry-content">
+<footer class="post-info">
+	<div class="published" title="2014-12-10T22:12:00">
+		10 December 2014 22:12
+	</div>
+
+	<!-- <p>In <a href="http://pavelbogomolenko.github.io/category/articles.html">articles</a>. -->
+<div class="tags">tags: <a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript&nbsp;</a><a href="http://pavelbogomolenko.github.io/tag/functional-programming/index.html">Functional programming&nbsp;</a></div>	
+</footer><!-- /.post-info -->			<p>Functional programming in Javascript??? Hey??? <a href="https://www.destroyallsoftware.com/talks/wat">Wat</a>??? In fact yes. Or at least partly.</p>
+<p>First lets begin with some very basic theory.</p>
+<p><a href="http://en.wikipedia.org/wiki/Imperative_programming">Imperative programming</a> is a programming paradigm that describes computation in terms of statements that change a program state.</p>
+<p>Imperative programming involves heavy usage of loops (<em>while, for</em>) and control structures (<em>if, switch</em>). </p>
+<p>While <a href="http://en.wikipedia.org/wiki/Functional_programming">functional programming</a> is a programming paradigm that treats computation as the evaluation of mathematical functions and avoids changing-state and mutable data. In a more general case it means focusing on functions.</p>
+<p>Good "real world" implementation of functional concepts is <a href="http://en.wikipedia.org/wiki/Pipeline_(Unix)">unix pipe</a></p>
+<p>E.g.</p>
+<div class="highlight"><pre># find all running java processes
+ps -ax | grep java
+</pre></div>
+
+
+<p>In example above we pass result of evaluation of particular expression to another expression without modifying initial state. You can swap expression, add some more expression, remove and so on and so forth. The key point here is that result of each expression depends only on input params.</p>
+<p>So where Javascipt stands here??? We can find an answer in language definitions itself. JS is imperative, scripting, dynamic typing, prototype-based language with first-class functions.
+This means that we cannot use all FP concepts efficiently (in particular we can't avoid mutability) here but we could reveal great power of First class function.</p>
+<p><strong>First class function</strong></p>
+<p>So what are <a href="http://en.wikipedia.org/wiki/First-class_function">First class function</a> concepts are:</p>
+<ul>
+<li>passing functions as arguments;</li>
+<li>anonymous and nested functions;</li>
+<li>closures;</li>
+<li>functions returning another functions;</li>
+<li>assigning functions to variables;</li>
+</ul>
+<p>Here some examples of usage these concepts:</p>
+<div class="highlight"><pre><span class="c1">//passing functions as arguments + anonymous and nested functions + assigning functions to variables</span>
+<span class="k">var</span> <span class="n">wrapper</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">f0</span><span class="p">(</span><span class="n">f1</span><span class="p">);};</span>
+<span class="k">var</span> <span class="n">stringToUpperCase</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">s</span><span class="p">.</span><span class="n">toUpperCase</span><span class="p">();}</span> 
+<span class="n">wrapper</span><span class="p">(</span><span class="n">stringToUpperCase</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">s</span><span class="p">;}(</span><span class="mh">&#39;he</span><span class="n">llo</span> <span class="n">world</span><span class="p">&#39;));</span>
+<span class="c1">//HELLO WORLD</span>
+</pre></div>
+
+
+<p>So what we have actually done here:</p>
+<ol>
+<li>We created a function that expects 2 arguments (f0 is a function, f1 any arbitrary value) and assign this function to a variable
+"wrapper" (which will hold reference to a our function). This function is responsible for "wrapping" any arbitrary value with some custom behavior (so simplified functional equivalent to Decorator or Wrapper pattern from OOP).</li>
+<li>We created a second function and assign it to a variable "stringToUpperCase". It is responsible apply upper-case transformation to ant JS string object.</li>
+<li>We called our "wrapper" function with first argument as function "stringToUpperCase" and second argument as value (as result of evaluation of anonymous function with immediate calling itself by using "()" expression "<em>(function(){ /<em> code </em>/ }());</em>" )</li>
+</ol>
+<p>Another import citizen of higher order functions is <a href="http://en.wikipedia.org/wiki/Closure_(computer_programming)">closure</a>.
+<em>Closure</em> is function that memorize the scope in which it was created. This means that all non-local variables "lives"
+in closure until the reference to closure is "alive".</p>
+<p>E.g.</p>
+<div class="highlight"><pre><span class="c1">// closures + functions returning another functions + nested functions</span>
+<span class="k">function</span> <span class="n">decrementBy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">-=</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">var</span> <span class="n">decrement10by2</span> <span class="o">=</span> <span class="n">decrementBy</span><span class="p">(</span><span class="mh">10</span><span class="p">,</span> <span class="mh">2</span><span class="p">);</span>
+<span class="n">decrement10by2</span><span class="p">();</span> <span class="c1">//8</span>
+<span class="n">decrement10by2</span><span class="p">();</span> <span class="c1">//6</span>
+<span class="n">decrement10by2</span><span class="p">();</span> <span class="c1">//4</span>
+<span class="p">.....</span>
+<span class="p">.....</span>
+</pre></div>
+
+
+<p>In this example function "decrementBy" returns a closure containing a reference to the anonymous function, which subtracts the "y" value from the non-local variable "x" value, so each time "decrement10by2" closure is called it always will reference to "memorized" value of "x".</p>
+<p>Having some basic overview of higher order functions concepts now it is time to talk about some specific techniques that can be applied to them.</p>
+<p><strong>1. Recursion</strong></p>
+<p>Recursion (or recursive definition) in a simple case is as function that calls itself. It is functional analog of <em>for...loop</em> expression from imperative world:</p>
+<p>e.g. </p>
+<div class="highlight"><pre><span class="c1">//general definition of recursive function</span>
+<span class="k">var</span> <span class="n">recur</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span><span class="n">recur</span><span class="p">()};</span>
+
+<span class="c1">// simple forRecur sum</span>
+<span class="k">var</span> <span class="n">recurSum</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">accSum</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">accSum</span> <span class="o">+=</span> <span class="n">arr</span><span class="p">[</span><span class="n">acc</span><span class="p">];</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mh">1</span> <span class="o">==</span> <span class="n">acc</span> <span class="o">?</span> <span class="n">accSum</span> <span class="o">:</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">accSum</span><span class="p">,</span> <span class="o">++</span><span class="n">acc</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="k">return</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mh">0</span><span class="p">,</span> <span class="mh">0</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">recurSum</span><span class="p">([</span><span class="mh">1</span><span class="p">,</span><span class="mh">2</span><span class="p">,</span><span class="mh">3</span><span class="p">,</span><span class="mh">4</span><span class="p">,</span><span class="mh">5</span><span class="p">]);</span>
+<span class="c1">//15</span>
+
+<span class="c1">//forEachCustom with callback</span>
+<span class="k">var</span> <span class="n">forEachCustom</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">acc</span><span class="p">]);</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mh">1</span> <span class="o">==</span> <span class="n">acc</span> <span class="o">?</span> <span class="n">undefined</span> <span class="o">:</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">++</span><span class="n">acc</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="mh">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">forEachCustom</span><span class="p">([</span><span class="mh">1</span><span class="p">,</span><span class="mh">2</span><span class="p">,</span><span class="mh">3</span><span class="p">],</span> <span class="k">function</span><span class="p">(</span><span class="n">i</span><span class="p">){</span><span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mh">2</span><span class="p">);});</span>
+<span class="c1">//2</span>
+<span class="c1">//4</span>
+<span class="c1">//6</span>
+<span class="c1">//undefined</span>
+</pre></div>
+
+
+<p>You may notice that these functions somehow identical to each other. So lets implement something more general:</p>
+<div class="highlight"><pre><span class="c1">// generalized function</span>
+<span class="k">var</span> <span class="n">accumulate</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">accInit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">arr</span><span class="p">[</span><span class="n">index</span><span class="p">]);</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mh">1</span> <span class="o">==</span> <span class="n">index</span> <span class="o">?</span> <span class="n">result</span> <span class="o">:</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="o">++</span><span class="n">index</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">loop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">accInit</span><span class="p">,</span> <span class="mh">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>In fact we just implemented <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">fold</a> function that now can be used for different purposes like:</p>
+<div class="highlight"><pre><span class="c1">//sum all elements in array</span>
+<span class="n">accumulate</span><span class="p">([</span><span class="mh">1</span><span class="p">,</span><span class="mh">2</span><span class="p">,</span><span class="mh">3</span><span class="p">,</span><span class="mh">4</span><span class="p">,</span><span class="mh">5</span><span class="p">],</span> <span class="k">function</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">i</span><span class="p">){</span><span class="k">return</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">i</span><span class="p">;},</span> <span class="mh">0</span><span class="p">);</span>
+<span class="c1">//15</span>
+
+<span class="c1">//multiply all elements in array</span>
+<span class="n">accumulate</span><span class="p">([</span><span class="mh">1</span><span class="p">,</span><span class="mh">2</span><span class="p">,</span><span class="mh">3</span><span class="p">,</span><span class="mh">4</span><span class="p">,</span><span class="mh">5</span><span class="p">],</span> <span class="k">function</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">i</span><span class="p">){</span><span class="k">return</span> <span class="n">acc</span> <span class="o">*</span> <span class="n">i</span><span class="p">;},</span> <span class="mh">1</span><span class="p">);</span>
+<span class="c1">//120</span>
+</pre></div>
+
+
+<blockquote>
+<p>Accumulate function available under the name reduce in Array.prototype object https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce</p>
+</blockquote>
+<p>All seemed to be good at first glance. Well not exactly. The main problem is that language has limitation on call stack and has no optimization for tail recursive call. This lead to situation that we should ONLY use recursion in JS where amount of data is known from the very beginning and should not exceed certain amount (defined for each browser and OS).
+Hopefully this problem will be solved with release of <a href="http://wiki.ecmascript.org/doku.php?id=harmony%3aproper_tail_calls">ES6 tail calls</a></p>
+<p><strong>2. Partial application</strong></p>
+<p><a href="http://en.wikipedia.org/wiki/Partial_application">Partial application</a> (or partial function application) refers to the process of fixing a number of arguments to a function, producing another function of smaller arity.</p>
+<p>That means that for any given arbitrary function, we can fix (or 'bind') any argument before actually calling it, by generating a new function function with remaining arguments.</p>
+<p>Unfortunately partial function are not native to JS unlike in all functional programming languages. But this lack can be easily eliminated by implementing simple variant of this function by ourself.</p>
+<div class="highlight"><pre><span class="c1">//simplified partial function implementation</span>
+<span class="k">function</span> <span class="n">partialF</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Get args array without the first argument (which is function &quot;fn&quot; itself).</span>
+    <span class="k">var</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[].</span><span class="n">slice</span><span class="p">.</span><span class="n">call</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="mh">1</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// call original function &quot;fn&quot; by passing in all fixed(&quot;binded&quot;)</span>
+        <span class="c1">// arguments, followed by any just-specified arguments.</span>
+        <span class="k">return</span> <span class="n">fn</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">concat</span><span class="p">([].</span><span class="n">slice</span><span class="p">.</span><span class="n">call</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="mh">0</span><span class="p">)));</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Understood how this function works will be much better with example below. Lets refer to our previously created function "decrementBy".</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">decrementBase10</span> <span class="o">=</span> <span class="nx">partialF</span><span class="p">(</span><span class="nx">decrementBy</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+<span class="c1">//function () {return fn.apply(this, args.concat(</span><span class="cp">[]</span><span class="c1">.slice.call(arguments, 0)));}</span>
+<span class="kd">var</span> <span class="nx">decrementBase10By2</span> <span class="o">=</span> <span class="nx">decrementBase10</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="c1">//function () {return x-=y;}</span>
+<span class="nx">decrementBase10By2</span><span class="p">();</span>
+<span class="c1">//8</span>
+<span class="nx">decrementBase10By2</span><span class="p">();</span>
+<span class="c1">//6</span>
+<span class="p">...</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<p>In the next example I will introduce a function which implementation was heavily inspired by Partial application itself (by in fact they are very different):</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">bindOnce</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="cp">[]</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">sumOnce</span> <span class="o">=</span> <span class="nx">bindOnce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">){</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;});</span>
+<span class="nx">sumOnce</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+<span class="c1">//30</span>
+<span class="nx">sumOnce</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+<span class="c1">//30 - from &#39;cache&#39; - actual function has not been called anymore</span>
+</pre></div>
+
+
+<p>In this example a function ("bindOnce") transforms any given function in a new function that can be executed only once.</p>
+<p><strong>3. Currying</strong></p>
+<p><a href="http://en wikipedia.org/wiki/Currying">Currying</a> is the technique of translating the evaluation of a function that takes multiple arguments (or a tuple of arguments) into evaluating a sequence of functions, each with a single argument.</p>
+<p>Partial application and currying are often confused becuase both techniques generate new function with binded params however partial application always return result right away in contrast where currying return another function (currying chain) until the very last param is provided.</p>
+<p>Currying as like as partial function is not native to JS. But no worries we can easily implement it using higher order
+function:</p>
+<div class="highlight"><pre><span class="c1">//simplified implementation of currying</span>
+<span class="k">function</span> <span class="n">curryF</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">nonLocalArg</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">function</span> <span class="n">curryingChain</span><span class="p">(</span><span class="n">localArg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">nonLocalArg</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">localArg</span><span class="p">);</span>
+        <span class="c1">// when all elements are provided for &quot;fn&quot; function than call it</span>
+        <span class="c1">// otherwise return currying function itself</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">nonLocalArg</span><span class="p">.</span><span class="n">length</span> <span class="o">&gt;=</span> <span class="n">fn</span><span class="p">.</span><span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">fn</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">nonLocalArg</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">curryingChain</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">curryingChain</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// usage of currying</span>
+<span class="k">var</span> <span class="n">bindTwoArgument</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">var</span> <span class="n">bindedTwoParamCurry</span> <span class="o">=</span> <span class="n">curryF</span><span class="p">(</span><span class="n">bindTwoArgument</span><span class="p">);</span>
+<span class="n">bindedTwoParamCurry</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">){</span><span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">})(</span><span class="mh">10</span><span class="p">)(</span><span class="mh">20</span><span class="p">);</span>
+<span class="c1">//30</span>
+<span class="k">var</span> <span class="n">bindedTwoParamCurry</span> <span class="o">=</span> <span class="n">curryF</span><span class="p">(</span><span class="n">bindTwoArgument</span><span class="p">);</span>
+<span class="n">bindedTwoParamCurry</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">){</span><span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">b</span><span class="p">})(</span><span class="mh">2</span><span class="p">)(</span><span class="mh">3</span><span class="p">);</span>
+<span class="c1">//13</span>
+</pre></div>
+
+
+<p><strong>Sort of summary:</strong></p>
+<p>So it is time to sum up some things from this article. </p>
+<p>First of all we have seen that it is possible to use a functional style in a language that is not traditionally considered as functional. The main and essential reason for this are First class functions. They enreach language and act as fundamental blocks in application. We have seen on various examples how to use some concepts of First class functions. We have learned how to construct and use Recursion, Partial application and Currying.</p>
+<p>Some links I was inspired on:</p>
+<ul>
+<li>http://benalman.com/news/2012/09/partial-application-in-javascript/</li>
+<li>https://www.coursera.org/course/progfun</li>
+<li>https://lodash.com/</li>
+</ul>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+			<h2>Comments</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+				var disqus_identifier = "introduction-to-functional-programming-in-javascript-1.html";
+				var disqus_url = "http://pavelbogomolenko.github.io/introduction-to-functional-programming-in-javascript-1.html";
+				(function() {
+				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://pavlobogomolenko.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			</script>
+		</div>
+
+	</article>
+</div>
+					<div class="col-md-2">
+						<div class="tagcloud">
+							<h2>Tag cloud</h2>
+							<ul>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/apache-solr/index.html">Apache Solr</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/e2e/index.html">e2e</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/promises/index.html">Promises</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/bdd/index.html">BDD</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/continuous-integration/index.html">Continuous integration</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/jenkins/index.html">Jenkins</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/angularjs/index.html">AngularJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/karma/index.html">Karma</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/unit-test/index.html">Unit test</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/protractor/index.html">Protractor</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/testing/index.html">Testing</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/npm/index.html">NPM</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/requirejs/index.html">RequireJS</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/functional-programming/index.html">Functional programming</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/nodejs/index.html">Node.js</a></li>
+									<li class="tag-1"><a href="http://pavelbogomolenko.github.io/tag/javascript/index.html">Javascript</a></li>
+									<li class="tag-4"><a href="http://pavelbogomolenko.github.io/tag/search/index.html">Search</a></li>
+									<li class="tag-2"><a href="http://pavelbogomolenko.github.io/tag/jasmine/index.html">Jasmine</a></li>
+							</ul>
+						</div>
+
+						<div class="social">
+							<h2>Social</h2>
+							<ul>
+									<li><a href="https://twitter.com/pbogomolenko">twitter</a></li>
+									<li><a href="http://www.linkedin.com/profile/view?id=222350828">linkedin</a></li>
+									<li><a href="https://www.xing.com/profiles/Pavlo_Bogomolenko">xing</a></li>
+							</ul>
+						</div><!-- /.social -->
+
+						<div class="twitter-widget">
+							<a class="twitter-timeline" href="https://twitter.com/pbogomolenko" data-widget-id="385711764647600128">Tweets by @pbogomolenko</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<footer id="footer" class="body">
+		<p>
+		Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+		</p>
+	</footer>
+
+	<script type="text/javascript">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-44618483-1', 'pavelbogomolenko.github.io');
+		ga('send', 'pageview');
+
+	</script>
+<script type="text/javascript">
+    var disqus_shortname = 'pavlobogomolenko';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>

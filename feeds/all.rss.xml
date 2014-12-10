@@ -1,5 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pavlo Bogomolenko's Blog</title><link>http://pavelbogomolenko.github.io/</link><description></description><atom:link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 19 Oct 2014 21:30:00 +0200</lastBuildDate><item><title>Protractor test suites as Promises</title><link>http://pavelbogomolenko.github.io/protractor-test-suites-as-promises.html</link><description>&lt;p&gt;In this article I will demonstrate you another way how to write effective and re-usables tests using Protractor.
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pavlo Bogomolenko's Blog</title><link>http://pavelbogomolenko.github.io/</link><description></description><atom:link href="http://pavelbogomolenko.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 10 Dec 2014 22:12:00 +0100</lastBuildDate><item><title>Introduction to Functional Programming in JS (part 1)</title><link>http://pavelbogomolenko.github.io/introduction-to-functional-programming-in-javascript-1.html</link><description>&lt;p&gt;Functional programming in Javascript??? Hey??? &lt;a href="https://www.destroyallsoftware.com/talks/wat"&gt;Wat&lt;/a&gt;??? In fact yes. Or at least partly.&lt;/p&gt;
+&lt;p&gt;First lets begin with some very basic theory.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://en.wikipedia.org/wiki/Imperative_programming"&gt;Imperative programming&lt;/a&gt; is a programming paradigm that describes computation in terms of statements that change a program state.&lt;/p&gt;
+&lt;p&gt;Imperative programming involves heavy usage of loops (&lt;em&gt;while, for&lt;/em&gt;) and control structures (&lt;em&gt;if, switch&lt;/em&gt;). &lt;/p&gt;
+&lt;p&gt;While &lt;a href="http://en.wikipedia.org/wiki/Functional_programming"&gt;functional programming&lt;/a&gt; is a programming paradigm that treats computation as the evaluation of mathematical functions and avoids changing-state and mutable data. In a more general case it means focusing on functions.&lt;/p&gt;
+&lt;p&gt;Good "real world" implementation of functional concepts is &lt;a href="http://en.wikipedia.org/wiki/Pipeline_(Unix)"&gt;unix pipe&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;E.g.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;# find all running java processes
+ps -ax | grep java
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In example above we pass result of evaluation of particular expression to another expression without modifying initial state. You can swap expression, add some more expression, remove and so on and so forth. The key point here is that result of each expression depends only on input params.&lt;/p&gt;
+&lt;p&gt;So where Javascipt stands here??? We can find an answer in language definitions itself. JS is imperative, scripting, dynamic typing, prototype-based language with first-class functions.
+This means that we cannot use all FP concepts efficiently (in particular we can't avoid mutability) here but we could reveal great power of First class function.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;First class function&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;So what are &lt;a href="http://en.wikipedia.org/wiki/First-class_function"&gt;First class function&lt;/a&gt; concepts are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;passing functions as arguments;&lt;/li&gt;
+&lt;li&gt;anonymous and nested functions;&lt;/li&gt;
+&lt;li&gt;closures;&lt;/li&gt;
+&lt;li&gt;functions returning another functions;&lt;/li&gt;
+&lt;li&gt;assigning functions to variables;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here some examples of usage these concepts:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//passing functions as arguments + anonymous and nested functions + assigning functions to variables&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;f0&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f1&lt;/span&gt;&lt;span class="p"&gt;);};&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;stringToUpperCase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;toUpperCase&lt;/span&gt;&lt;span class="p"&gt;();}&lt;/span&gt; 
+&lt;span class="n"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stringToUpperCase&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;;}(&lt;/span&gt;&lt;span class="mh"&gt;&amp;#39;he&lt;/span&gt;&lt;span class="n"&gt;llo&lt;/span&gt; &lt;span class="n"&gt;world&lt;/span&gt;&lt;span class="p"&gt;&amp;#39;));&lt;/span&gt;
+&lt;span class="c1"&gt;//HELLO WORLD&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So what we have actually done here:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We created a function that expects 2 arguments (f0 is a function, f1 any arbitrary value) and assign this function to a variable
+"wrapper" (which will hold reference to a our function). This function is responsible for "wrapping" any arbitrary value with some custom behavior (so simplified functional equivalent to Decorator or Wrapper pattern from OOP).&lt;/li&gt;
+&lt;li&gt;We created a second function and assign it to a variable "stringToUpperCase". It is responsible apply upper-case transformation to ant JS string object.&lt;/li&gt;
+&lt;li&gt;We called our "wrapper" function with first argument as function "stringToUpperCase" and second argument as value (as result of evaluation of anonymous function with immediate calling itself by using "()" expression "&lt;em&gt;(function(){ /&lt;em&gt; code &lt;/em&gt;/ }());&lt;/em&gt;" )&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Another import citizen of higher order functions is &lt;a href="http://en.wikipedia.org/wiki/Closure_(computer_programming)"&gt;closure&lt;/a&gt;.
+&lt;em&gt;Closure&lt;/em&gt; is function that memorize the scope in which it was created. This means that all non-local variables "lives"
+in closure until the reference to closure is "alive".&lt;/p&gt;
+&lt;p&gt;E.g.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// closures + functions returning another functions + nested functions&lt;/span&gt;
+&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;decrementBy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;-=&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;decrement10by2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;decrementBy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mh"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;decrement10by2&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;//8&lt;/span&gt;
+&lt;span class="n"&gt;decrement10by2&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;//6&lt;/span&gt;
+&lt;span class="n"&gt;decrement10by2&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;//4&lt;/span&gt;
+&lt;span class="p"&gt;.....&lt;/span&gt;
+&lt;span class="p"&gt;.....&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In this example function "decrementBy" returns a closure containing a reference to the anonymous function, which subtracts the "y" value from the non-local variable "x" value, so each time "decrement10by2" closure is called it always will reference to "memorized" value of "x".&lt;/p&gt;
+&lt;p&gt;Having some basic overview of higher order functions concepts now it is time to talk about some specific techniques that can be applied to them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. Recursion&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Recursion (or recursive definition) in a simple case is as function that calls itself. It is functional analog of &lt;em&gt;for...loop&lt;/em&gt; expression from imperative world:&lt;/p&gt;
+&lt;p&gt;e.g. &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//general definition of recursive function&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;recur&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;recur&lt;/span&gt;&lt;span class="p"&gt;()};&lt;/span&gt;
+
+&lt;span class="c1"&gt;// simple forRecur sum&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;recurSum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;accSum&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;accSum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mh"&gt;1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;accSum&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;accSum&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;};&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;recurSum&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mh"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="c1"&gt;//15&lt;/span&gt;
+
+&lt;span class="c1"&gt;//forEachCustom with callback&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;forEachCustom&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mh"&gt;1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;undefined&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;forEachCustom&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mh"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;3&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="n"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;);});&lt;/span&gt;
+&lt;span class="c1"&gt;//2&lt;/span&gt;
+&lt;span class="c1"&gt;//4&lt;/span&gt;
+&lt;span class="c1"&gt;//6&lt;/span&gt;
+&lt;span class="c1"&gt;//undefined&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You may notice that these functions somehow identical to each other. So lets implement something more general:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// generalized function&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;accumulate&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;accInit&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mh"&gt;1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;accInit&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In fact we just implemented &lt;a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)"&gt;fold&lt;/a&gt; function that now can be used for different purposes like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//sum all elements in array&lt;/span&gt;
+&lt;span class="n"&gt;accumulate&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mh"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;5&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;},&lt;/span&gt; &lt;span class="mh"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//15&lt;/span&gt;
+
+&lt;span class="c1"&gt;//multiply all elements in array&lt;/span&gt;
+&lt;span class="n"&gt;accumulate&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mh"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mh"&gt;5&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;},&lt;/span&gt; &lt;span class="mh"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//120&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;Accumulate function available under the name reduce in Array.prototype object https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;All seemed to be good at first glance. Well not exactly. The main problem is that language has limitation on call stack and has no optimization for tail recursive call. This lead to situation that we should ONLY use recursion in JS where amount of data is known from the very beginning and should not exceed certain amount (defined for each browser and OS).
+Hopefully this problem will be solved with release of &lt;a href="http://wiki.ecmascript.org/doku.php?id=harmony%3aproper_tail_calls"&gt;ES6 tail calls&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. Partial application&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://en.wikipedia.org/wiki/Partial_application"&gt;Partial application&lt;/a&gt; (or partial function application) refers to the process of fixing a number of arguments to a function, producing another function of smaller arity.&lt;/p&gt;
+&lt;p&gt;That means that for any given arbitrary function, we can fix (or 'bind') any argument before actually calling it, by generating a new function function with remaining arguments.&lt;/p&gt;
+&lt;p&gt;Unfortunately partial function are not native to JS unlike in all functional programming languages. But this lack can be easily eliminated by implementing simple variant of this function by ourself.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//simplified partial function implementation&lt;/span&gt;
+&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;partialF&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fn&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// Get args array without the first argument (which is function &amp;quot;fn&amp;quot; itself).&lt;/span&gt;
+    &lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[].&lt;/span&gt;&lt;span class="n"&gt;slice&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arguments&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// call original function &amp;quot;fn&amp;quot; by passing in all fixed(&amp;quot;binded&amp;quot;)&lt;/span&gt;
+        &lt;span class="c1"&gt;// arguments, followed by any just-specified arguments.&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;fn&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;concat&lt;/span&gt;&lt;span class="p"&gt;([].&lt;/span&gt;&lt;span class="n"&gt;slice&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arguments&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)));&lt;/span&gt;
+    &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Understood how this function works will be much better with example below. Lets refer to our previously created function "decrementBy".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;decrementBase10&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;partialF&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;decrementBy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//function () {return fn.apply(this, args.concat(&lt;/span&gt;&lt;span class="cp"&gt;[]&lt;/span&gt;&lt;span class="c1"&gt;.slice.call(arguments, 0)));}&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;decrementBase10By2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;decrementBase10&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//function () {return x-=y;}&lt;/span&gt;
+&lt;span class="nx"&gt;decrementBase10By2&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="c1"&gt;//8&lt;/span&gt;
+&lt;span class="nx"&gt;decrementBase10By2&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="c1"&gt;//6&lt;/span&gt;
+&lt;span class="p"&gt;...&lt;/span&gt;
+&lt;span class="p"&gt;...&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In the next example I will introduce a function which implementation was heavily inspired by Partial application itself (by in fact they are very different):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;bindOnce&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="nx"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="cp"&gt;[]&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;slice&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;arguments&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;sumOnce&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;bindOnce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;});&lt;/span&gt;
+&lt;span class="nx"&gt;sumOnce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//30&lt;/span&gt;
+&lt;span class="nx"&gt;sumOnce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//30 - from &amp;#39;cache&amp;#39; - actual function has not been called anymore&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In this example a function ("bindOnce") transforms any given function in a new function that can be executed only once.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3. Currying&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://en wikipedia.org/wiki/Currying"&gt;Currying&lt;/a&gt; is the technique of translating the evaluation of a function that takes multiple arguments (or a tuple of arguments) into evaluating a sequence of functions, each with a single argument.&lt;/p&gt;
+&lt;p&gt;Partial application and currying are often confused becuase both techniques generate new function with binded params however partial application always return result right away in contrast where currying return another function (currying chain) until the very last param is provided.&lt;/p&gt;
+&lt;p&gt;Currying as like as partial function is not native to JS. But no worries we can easily implement it using higher order
+function:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//simplified implementation of currying&lt;/span&gt;
+&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;curryF&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fn&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;nonLocalArg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+    &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;curryingChain&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;localArg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;nonLocalArg&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;localArg&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="c1"&gt;// when all elements are provided for &amp;quot;fn&amp;quot; function than call it&lt;/span&gt;
+        &lt;span class="c1"&gt;// otherwise return currying function itself&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nonLocalArg&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="n"&gt;fn&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;fn&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;nonLocalArg&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;curryingChain&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;curryingChain&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="c1"&gt;// usage of currying&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;bindTwoArgument&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;bindedTwoParamCurry&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;curryF&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bindTwoArgument&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;bindedTwoParamCurry&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;})(&lt;/span&gt;&lt;span class="mh"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="mh"&gt;20&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//30&lt;/span&gt;
+&lt;span class="k"&gt;var&lt;/span&gt; &lt;span class="n"&gt;bindedTwoParamCurry&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;curryF&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bindTwoArgument&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;bindedTwoParamCurry&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;})(&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="mh"&gt;3&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;//13&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Sort of summary:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;So it is time to sum up some things from this article. &lt;/p&gt;
+&lt;p&gt;First of all we have seen that it is possible to use a functional style in a language that is not traditionally considered as functional. The main and essential reason for this are First class functions. They enreach language and act as fundamental blocks in application. We have seen on various examples how to use some concepts of First class functions. We have learned how to construct and use Recursion, Partial application and Currying.&lt;/p&gt;
+&lt;p&gt;Some links I was inspired on:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;http://benalman.com/news/2012/09/partial-application-in-javascript/&lt;/li&gt;
+&lt;li&gt;https://www.coursera.org/course/progfun&lt;/li&gt;
+&lt;li&gt;https://lodash.com/&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Pavlo Bogomolenko</dc:creator><pubDate>Wed, 10 Dec 2014 22:12:00 +0100</pubDate><guid>tag:pavelbogomolenko.github.io,2014-12-10:introduction-to-functional-programming-in-javascript-1.html</guid><category>Javascript</category><category>Functional programming</category></item><item><title>Protractor test suites as Promises</title><link>http://pavelbogomolenko.github.io/protractor-test-suites-as-promises.html</link><description>&lt;p&gt;In this article I will demonstrate you another way how to write effective and re-usables tests using Protractor.
 In general this post can be treated as smooth continuation of my previous article about 
 &lt;a href="http://pavelbogomolenko.github.io/dry-principles-with-protractor.html"&gt;DRY principles with Protractor e2e testing framework&lt;/a&gt;.
 But this time I will show you how to use Promises as more effective way of dealing with results of evalutions of test suites 
